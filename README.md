@@ -1,4 +1,4 @@
-# GrafikaProjekt
+# TiWPR - Projekt 1
 # Install
 
 To run this project you will need the [**Node Js**](https://nodejs.org/)
@@ -24,9 +24,3 @@ after dependencies installation
 and our aplication is working. 
 
 Now to see the result in web browser localy we need to install extension in vscode the [**Live Server**](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
-
-<br>
-
-# Preview
-
-![Alt text](demo.png?raw=true "Title")

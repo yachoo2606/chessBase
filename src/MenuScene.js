@@ -7,13 +7,10 @@ export default class MenuScene extends Phaser.Scene{
     }
     preload(){
     }
-    create(){
-        //background
-
-        
+    create(){       
         //TITLE
         this.cameras.main.setBackgroundColor("#213769");
-        this.titleText = this.add.text(window.innerWidth/2, window.innerHeight/10, "WarShip",{ fontSize: '120px', fill: '#fff' })
+        this.titleText = this.add.text(window.innerWidth/2, window.innerHeight/10, "WarShips",{ fontSize: '120px', fill: '#fff' })
         this.titleText.setOrigin(0.5);
 
         // Add buttons
