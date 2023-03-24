@@ -11,3 +11,7 @@ const config={
 };
 
 const game = new Phaser.Game(config);
+game.canvas.addEventListener('contextmenu', (evt)=>{
+    evt.preventDefault();
+    evt.stopPropagation();
+})
