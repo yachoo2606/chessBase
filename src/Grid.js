@@ -30,7 +30,7 @@ export default class Grid extends Phaser.GameObjects.GameObject{
                     this.graphics.lineBetween(sprite.x-22,sprite.y-22,sprite.x+22,sprite.y+22);
                 }
                 if(Math.floor((Math.round(sprite.x-x))/scale) == 0 && Math.floor(((Math.round(sprite.y-y)))/scale)!=0){
-                    scene.add.text(sprite.x-5,sprite.y-5,Math.floor((Math.round(sprite.y-y))/scale),{fontSize:25})
+                    scene.add.text(sprite.x-7,sprite.y-5,Math.floor((Math.round(sprite.y-y))/scale),{fontSize:25})
                 }
                 if(Math.floor((Math.round(sprite.x-x))/scale) != 0 && Math.floor((Math.round(sprite.y-y))/scale) == 0 ){
                     scene.add.text(sprite.x-5,sprite.y-5,this.letters[Math.floor((Math.round(sprite.x-x))/scale)-1],{fontSize:25})
