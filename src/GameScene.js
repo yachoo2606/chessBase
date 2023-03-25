@@ -63,19 +63,36 @@ export default class GameScene extends Phaser.Scene {
                 ship.x = dragX;
                 ship.y = dragY;
             });
-            ship.on('drop', (pointer, gameObject,target) => {
+            ship.on('drop', (pointer, gameObject,target) => {     
+                let canBePlaced = true;           
                 this.myGrid.grid.children.iterate(sprite =>{
                     if(Phaser.Geom.Intersects.RectangleToRectangle(ship.getBounds(),sprite.getBounds())){
                         console.log("kolizja", gameObject.coordinates ,sprite.coordinates, sprite.canBePlaced)
                         if(sprite.canBePlaced){
-                            sprite.canBePlaced = false;
-                            ship.removeAllListeners();
-                            ship.setDepth(0);
-                            console.log("ship: "+ship.name+" placed");
+                            ship.fieldsOfShip.coordinates.push(sprite.coordinates)
+                        }else{
+                            canBePlaced = false;
                         }
                     }
-                    //TODO add blocking around fields
                 })
+                if(canBePlaced && (ship.lives == ship.fieldsOfShip.coordinates.length) ){
+                    console.log("ship: "+ship.name+" placed", ship.fieldsOfShip,"lives:"+ship.lives);
+                    this.myGrid.grid.children.iterate(sprite=>{
+                        ship.fieldsOfShip.coordinates.forEach(coords =>{
+                            if(sprite.coordinates == coords){
+                                sprite.canBePlaced = false;
+                                ship.removeAllListeners();
+                                ship.setDepth(0);
+                                console.log(sprite.coordinates, coords)
+                            }
+                        })
+                    })
+                }else{
+                    ship.fieldsOfShip = {
+                        name:ship.name,
+                        coordinates:[]
+                    }
+                }
             });
         })
 
