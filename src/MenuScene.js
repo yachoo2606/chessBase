@@ -16,8 +16,7 @@ export default class MenuScene extends Phaser.Scene{
         // Add buttons
 
         this.playButton = new TextButton(this,window.innerWidth/2,window.innerHeight/2,"Play",{ fontSize: '64px', fill: '#fff' },()=>{
-            // alert("Play");
-            this.scene.start('gameScene');
+            this.scene.start('loadingScene');
         })
         this.add.existing(this.playButton)
 
