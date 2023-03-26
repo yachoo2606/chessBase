@@ -77,6 +77,7 @@ export default class GameScene extends Phaser.Scene {
                 })
                 if(canBePlaced && (ship.lives == ship.fieldsOfShip.coordinates.length) ){
                     // console.log("ship: "+ship.name+" placed", ship.fieldsOfShip,"lives:"+ship.lives);
+                    ship.placed = true;
                     this.myGrid.grid.children.iterate(sprite=>{
                         ship.fieldsOfShip.coordinates.forEach(coords =>{
                             if(sprite.coordinates == coords){
@@ -124,6 +125,16 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update() {
+        //Detection of placing all ships
+        // let allplaced = true;
+        // this.ships.forEach(ship => {
+        //     if(ship.placed == false){
+        //         allplaced = false
+        //     }
+        // })
+        // if(allplaced){
+        //     console.log("statki rozłożone")
+        // }
     }
 
     
