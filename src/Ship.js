@@ -5,6 +5,8 @@ export default class Ship extends Phaser.GameObjects.Image{
     constructor(scene,x,y,texture,number){
         super(scene,texture);
 
+        this.originalCords = {x:x,y:y};
+
         this.scaleVar = 45;
 
         this.setTexture(texture);

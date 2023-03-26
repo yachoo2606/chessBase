@@ -50,7 +50,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.ships.forEach(ship => {
             ship.on("dragstart",(pointer, gameObject)=>{
-                console.log("dragstart", pointer,gameObject);
+                console.log("dragstart",ship.name, pointer,gameObject);
                 if(pointer.rightButtonDown()){
                     if(ship.angle == 90){
                         ship.setAngle(0);
@@ -67,7 +67,7 @@ export default class GameScene extends Phaser.Scene {
                 let canBePlaced = true;           
                 this.myGrid.grid.children.iterate(sprite =>{
                     if(Phaser.Geom.Intersects.RectangleToRectangle(ship.getBounds(),sprite.getBounds())){
-                        console.log("kolizja", gameObject.coordinates ,sprite.coordinates, sprite.canBePlaced)
+                        // console.log("kolizja", gameObject.coordinates ,sprite.coordinates, sprite.canBePlaced)
                         if(sprite.canBePlaced){
                             ship.fieldsOfShip.coordinates.push(sprite.coordinates)
                         }else{
@@ -76,18 +76,39 @@ export default class GameScene extends Phaser.Scene {
                     }
                 })
                 if(canBePlaced && (ship.lives == ship.fieldsOfShip.coordinates.length) ){
-                    console.log("ship: "+ship.name+" placed", ship.fieldsOfShip,"lives:"+ship.lives);
+                    // console.log("ship: "+ship.name+" placed", ship.fieldsOfShip,"lives:"+ship.lives);
                     this.myGrid.grid.children.iterate(sprite=>{
                         ship.fieldsOfShip.coordinates.forEach(coords =>{
                             if(sprite.coordinates == coords){
                                 sprite.canBePlaced = false;
                                 ship.removeAllListeners();
                                 ship.setDepth(0);
-                                console.log(sprite.coordinates, coords)
+                                // console.log(sprite.coordinates, coords)
                             }
+                            
+                            if(sprite.coordinates.y == coords.y-1 && 
+                                (sprite.coordinates.x == coords.x-1 ||
+                                 sprite.coordinates.x == coords.x ||
+                                 sprite.coordinates.x == coords.x+1)){
+                                    sprite.canBePlaced = false;
+                                }
+                            if(sprite.coordinates.y == coords.y && 
+                                (sprite.coordinates.x == coords.x-1 ||
+                                 sprite.coordinates.x == coords.x+1)){
+                                        sprite.canBePlaced = false;
+                                    } 
+                            if(sprite.coordinates.y == coords.y+1 && 
+                                (sprite.coordinates.x == coords.x-1 ||
+                                 sprite.coordinates.x == coords.x ||
+                                 sprite.coordinates.x == coords.x+1)){
+                                    sprite.canBePlaced = false;
+                            } 
+
                         })
                     })
                 }else{
+                    ship.x = ship.originalCords.x;
+                    ship.y = ship.originalCords.y;
                     ship.fieldsOfShip = {
                         name:ship.name,
                         coordinates:[]
