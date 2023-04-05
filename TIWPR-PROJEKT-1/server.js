@@ -1,28 +1,30 @@
 const WebSocket = require('ws');
-const {Worker} = require('worker_threads');
 
 const PORT = 5555;
 
-const server = new WebSocket.Server({port:PORT});
+function waitForWebSocketConnection(wss) {
+  return new Promise((resolve, reject) => {
+    wss.on('connection', (ws) => {
+      resolve(ws);
+    });
+  });
+}
 
-server.on('connection',(ws,req)=>{
-    console.log("connected user", req.connection.remoteAddress);
-})
+async function handleWebSocketConnection() {
+  const wss = new WebSocket.Server({ port: PORT });
+  console.log(`WebSocket server started on port ${PORT}`);
 
-server.on('request', req => {
-    const player = req.accept(null, req.origin);
-    console.log("open user", req.connection.remoteAddress);
+  while(true){
+    const client1 = await waitForWebSocketConnection(wss);
+    const client2 = await waitForWebSocketConnection(wss);
 
-    // if(player1===null){
-    //     player1 = ws;
-    // }else{
-    //     player2 = ws;
+    console.log('clietsConnected');
+    client1.send('gameEstablished')
+    client2.send('gameEstablished')
+    console.log("message sended to clients");
+    // Do something with the client
+  }
+}
 
-    //     player1.send("gameEstablished");
-    //     player2.send("gameEstablished");
-        
-    //     ws.on('message', (message) => {
-    //         console.log(`Received message: ${message}`);
-    //     });
-    // }
-});
+handleWebSocketConnection();
+
