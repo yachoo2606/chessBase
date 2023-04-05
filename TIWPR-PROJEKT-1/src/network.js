@@ -1,12 +1,14 @@
 let socket;
 
+const ADDRESS = "127.0.0.1";
+const PORT = 5555;
 
 self.onmessage = (event)=>{
     if(event.data.type === 'connect'){
-        socket = new WebSocket('ws://127.0.0.1:5555');
+        socket = new WebSocket(`ws://${ADDRESS}:${PORT}`);
         
         socket.addEventListener('open', ()=>{
-            // self.postMessage('connnected');
+            console.log('connected to Server')
             self.postMessage('Connected');
         })
         
@@ -14,8 +16,6 @@ self.onmessage = (event)=>{
             console.log("Message from server ", event.data);
             if(event.data === 'gameEstablished'){
                 self.postMessage("gameStart")
-            }else{
-                console.log("waiting For game");
             }
         });
         
