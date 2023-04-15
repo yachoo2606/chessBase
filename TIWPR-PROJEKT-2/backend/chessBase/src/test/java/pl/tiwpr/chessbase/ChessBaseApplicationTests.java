@@ -1,13 +1,13 @@
-package com.pptiwpr.tiwprprojekt;
+package pl.tiwpr.chessbase;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TIwPrProjektApplicationTests {
+class ChessBaseApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+	@Test
+	void contextLoads() {
+	}
 
 }
