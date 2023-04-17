@@ -4,6 +4,9 @@ package pl.tiwpr.chessbase.api;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,16 +28,18 @@ public class PlayersController {
 
 
     @GetMapping
-    public Iterable<Player> getAllPlayers(){
+    public Page<Player> getAllPlayers(@RequestParam(defaultValue ="1") int page,
+                                      @RequestParam(defaultValue = "#{playersRepository.count()}") int size){
+        Pageable pageable = PageRequest.of(page-1, size);
         log.info("All Players Requested");
-        return playersRepository.findAll();
+        return playersRepository.findAll(pageable);
     }
 
     @PostMapping
     public ResponseEntity<Player> addPlayer(@RequestBody Player player){
-        if(player.getName() == null || player.getSurname()==null){
-            log.warn("Player add failed: Name and surname must not be null");
-            throw new MissingDataException("Name and surname must not be null");
+        if(player.getName() == null || player.getLastName()==null){
+            log.warn("Player add failed: Name and last name must not be null");
+            throw new MissingDataException("Name and last name must not be null");
         }
         Player addedPlayer = playersRepository.save(player);
         log.info("Player Added: "+addedPlayer.toString());
