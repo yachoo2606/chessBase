@@ -29,7 +29,7 @@ public class PlayersController {
 
     @GetMapping
     public Page<Player> getAllPlayers(@RequestParam(defaultValue ="1") int page,
-                                      @RequestParam(defaultValue = "#{playersRepository.count()}") int size){
+                                      @RequestParam(defaultValue = "#{playersRepository.count()+1}") int size){
         Pageable pageable = PageRequest.of(page-1, size);
         log.info("All Players Requested");
         return playersRepository.findAll(pageable);
