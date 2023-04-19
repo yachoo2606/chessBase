@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**")
                     .permitAll()
+                .requestMatchers("/admin").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.GET,"/players")
                     .permitAll()
                 .anyRequest()
