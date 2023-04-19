@@ -21,6 +21,6 @@ application:
   security:
     jwt:
       secret-key: // todo add SECRET KEY here
-      expiration: 60000 # 86400000 # a day
+      expiration: 86400000 # 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
