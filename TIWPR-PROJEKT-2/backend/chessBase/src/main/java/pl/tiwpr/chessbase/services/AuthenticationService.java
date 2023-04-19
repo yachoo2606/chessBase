@@ -1,4 +1,4 @@
-package pl.tiwpr.chessbase.services.auth;
+package pl.tiwpr.chessbase.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

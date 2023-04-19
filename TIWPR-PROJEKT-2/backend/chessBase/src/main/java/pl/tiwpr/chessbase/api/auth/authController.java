@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.tiwpr.chessbase.model.auth.AuthenticationRequest;
 import pl.tiwpr.chessbase.model.auth.AuthenticationResponse;
 import pl.tiwpr.chessbase.model.auth.RegisterRequest;
-import pl.tiwpr.chessbase.services.auth.AuthenticationService;
+import pl.tiwpr.chessbase.services.AuthenticationService;
 
 
 @Validated
