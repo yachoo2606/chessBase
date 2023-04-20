@@ -42,7 +42,7 @@ public class PlayersController {
             throw new MissingDataException("Name and last name must not be null");
         }
         Player addedPlayer = playersRepository.save(player);
-        log.info("Player Added: "+addedPlayer.toString());
+        log.info("Player Added: "+addedPlayer);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedPlayer);
     }
 
