@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import pl.tiwpr.chessbase.exceptions.CustomAccessDeniedHandler;
+import pl.tiwpr.chessbase.exceptions.CustomJwtAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity

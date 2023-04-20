@@ -1,4 +1,4 @@
-package pl.tiwpr.chessbase.config;
+package pl.tiwpr.chessbase.exceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
