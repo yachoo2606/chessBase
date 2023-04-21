@@ -3,7 +3,6 @@ package pl.tiwpr.chessbase.api;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
 import pl.tiwpr.chessbase.model.Player;
-import pl.tiwpr.chessbase.repositories.PlayersRepository;
+import pl.tiwpr.chessbase.model.views.PlayerView;
+import pl.tiwpr.chessbase.services.PlayersService;
 
 import java.util.Optional;
 
@@ -23,32 +23,35 @@ import java.util.Optional;
 @RequestMapping("/players")
 public class PlayersController {
 
-    @Autowired
-    private PlayersRepository playersRepository;
 
+    private final PlayersService playersService;
+
+    public PlayersController(PlayersService playersService) {
+        this.playersService = playersService;
+    }
 
     @GetMapping
-    public Page<Player> getAllPlayers(@RequestParam(defaultValue ="1") int page,
-                                      @RequestParam(defaultValue = "#{playersRepository.count()+1}") int size){
+    public Page<PlayerView> getAllPlayers(@RequestParam(defaultValue ="1") int page,
+                                          @RequestParam(defaultValue = "#{playersRepository.count()+1}") int size){
         Pageable pageable = PageRequest.of(page-1, size);
         log.info("All Players Requested");
-        return playersRepository.findAll(pageable);
+        return this.playersService.getAllPlayers(pageable);
     }
 
     @PostMapping
-    public ResponseEntity<Player> addPlayer(@RequestBody Player player){
+    public ResponseEntity<PlayerView> addPlayer(@RequestBody Player player){
         if(player.getName() == null || player.getLastName()==null){
             log.warn("Player add failed: Name and last name must not be null");
             throw new MissingDataException("Name and last name must not be null");
         }
-        Player addedPlayer = playersRepository.save(player);
+        PlayerView addedPlayer = this.playersService.createPlayer(player);
         log.info("Player Added: "+addedPlayer);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedPlayer);
     }
 
     @GetMapping("/{id}")
-    public Optional<Player> welcomePage(@PathVariable @NonNull Long id){
-        Optional<Player> requestedPlayer = playersRepository.findOneById(id);
+    public Optional<PlayerView> welcomePage(@PathVariable @NonNull Long id){
+        Optional<PlayerView> requestedPlayer = this.playersService.getOneById(id);
         log.info("Details of Player: "+ requestedPlayer.toString());
         return requestedPlayer;
     }
