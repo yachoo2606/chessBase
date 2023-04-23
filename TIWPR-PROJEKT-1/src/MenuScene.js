@@ -6,6 +6,7 @@ export default class MenuScene extends Phaser.Scene{
         super({key:'menuScene'})
     }
     preload(){
+        
     }
     create(){       
         //TITLE

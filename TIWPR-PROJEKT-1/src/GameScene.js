@@ -2,10 +2,14 @@ import Phaser from "phaser";
 import Grid from "./Grid";
 import Ship from "./Ship";
 import { TextButton } from "./TextButton";
+import globalNetworkWorker from "./globalNetworkWorker";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'gameScene' });
+        this.allShipPlaced = false;
+        this.myLifes = 20;
+        this.oponentsLifes = 20;
     }
 
     preload() {
@@ -67,9 +71,9 @@ export default class GameScene extends Phaser.Scene {
                 let canBePlaced = true;           
                 this.myGrid.grid.children.iterate(sprite =>{
                     if(Phaser.Geom.Intersects.RectangleToRectangle(ship.getBounds(),sprite.getBounds())){
-                        // console.log("kolizja", gameObject.coordinates ,sprite.coordinates, sprite.canBePlaced)
+                        console.log("kolizja", gameObject.coordinates ,sprite.coordinates, sprite.canBePlaced)
                         if(sprite.canBePlaced){
-                            ship.fieldsOfShip.coordinates.push(sprite.coordinates)
+                            ship.fieldsOfShip.coordinates.push({original: {x:sprite.x,y:sprite.y}, logical:sprite.coordinates})
                         }else{
                             canBePlaced = false;
                         }
@@ -83,6 +87,7 @@ export default class GameScene extends Phaser.Scene {
                             if(sprite.coordinates == coords){
                                 sprite.canBePlaced = false;
                                 ship.removeAllListeners();
+                                ship.input.draggable = false;
                                 ship.setDepth(0);
                                 // console.log(sprite.coordinates, coords)
                             }
@@ -117,24 +122,94 @@ export default class GameScene extends Phaser.Scene {
                 }
             });
         })
+    }
 
-        this.exitButton = new TextButton(this,window.innerWidth/2,window.innerHeight,"Exit",{ fontSize: '64px', fill: '#fff' },()=>{
-            this.scene.start('menuScene')
-        })
-        this.add.existing(this.exitButton);
+    checkShoot(x,y){
+
+        for(let ship of this.ships){
+            for(let field of ship.fieldsOfShip.coordinates){
+                if(field.logical.x === x && field.logical.y === y){
+                    this.myGrid.setCrossOrCircle(true,x, y)
+                    globalNetworkWorker.postMessage({type:"shootChecked",ship:true})
+                    this.myLifes -=1;
+                    localStorage.setItem("turn","true");
+                    this.saveScebeData()
+                    return;
+                }
+            }
+        }
+        this.myGrid.setCrossOrCircle(false,x, y)
+        localStorage.setItem("turn","true");
+        this.saveScebeData()
+        globalNetworkWorker.postMessage({type:"shootChecked",ship:false})
+    }
+
+    checkIfAllPlaced(){
+        for(const ship of this.ships){
+            if(ship.fieldsOfShip.coordinates.length === 0){
+                localStorage.setItem("allShipPlaced","false");
+                return false
+            }
+        }
+        localStorage.setItem("allShipPlaced","true");
+        return true;
+    }
+    
+    saveScebeData(){
+        const sceneObjects = this.children.getAll();
+
+        const sceneObjectsJSON = JSON.stringify(sceneObjects);
+
+        localStorage.setItem('savedSceneObjects',sceneObjectsJSON);
+
     }
 
     update() {
-        //Detection of placing all ships
-        // let allplaced = true;
-        // this.ships.forEach(ship => {
-        //     if(ship.placed == false){
-        //         allplaced = false
-        //     }
-        // })
-        // if(allplaced){
-        //     console.log("statki rozłożone")
-        // }
+
+        if(JSON.parse(localStorage.getItem("checkShoot"))){
+            console.log("shoot to check: ", JSON.parse(localStorage.getItem("checkShoot")).x, JSON.parse(localStorage.getItem("checkShoot")).y)
+            this.checkShoot(JSON.parse(localStorage.getItem("checkShoot")).x,JSON.parse(localStorage.getItem("checkShoot")).y);
+            localStorage.removeItem("checkShoot");
+        }
+
+        if(!this.allShipPlaced){
+            document.title = "Place all ships"
+            this.allShipPlaced = this.checkIfAllPlaced();
+        }
+
+        if(localStorage.getItem("markEnemyBorad")==="true"){
+            this.enemyGrid.setCrossOrCircle(
+                true,
+                JSON.parse(localStorage.getItem("enemyGridToShot")).x,
+                JSON.parse(localStorage.getItem("enemyGridToShot")).y
+            )
+            this.oponentsLifes -= 1;
+            this.saveScebeData()
+            localStorage.removeItem("markEnemyBorad")
+        }else if(localStorage.getItem("markEnemyBorad")==="false"){
+            this.enemyGrid.setCrossOrCircle(
+                false,
+                JSON.parse(localStorage.getItem("enemyGridToShot")).x,
+                JSON.parse(localStorage.getItem("enemyGridToShot")).y
+            )
+            localStorage.removeItem("markEnemyBorad")
+            this.saveScebeData()
+        }
+        
+        if(localStorage.getItem("turn")==="true" && localStorage.getItem("allShipPlaced") === "true"){
+            document.title = "My Turn, lifes:" + this.myLifes;
+        }else if(localStorage.getItem("turn")==="false" && localStorage.getItem("allShipPlaced") === "true"){
+            document.title = "Oponent Turn, lifes:" + this.myLifes;
+        }
+
+        if(this.myLifes === 0){
+            this.scene.start('endingScene',{winner:false});
+        }
+
+        if(this.oponentsLifes === 0){
+            this.scene.start('endingScene',{winner:true});
+        }
+
     }
 
     

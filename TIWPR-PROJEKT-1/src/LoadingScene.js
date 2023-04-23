@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import globalNetworkWorker from "./globalNetworkWorker"
+
 
 export default class LoadingScene extends Phaser.Scene{
     
@@ -16,24 +18,17 @@ export default class LoadingScene extends Phaser.Scene{
         this.waitingText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY,"Waiting for opponent....",{ fontSize: '64px', fill: '#fff' });
         this.waitingText.x = this.waitingText.x - this.waitingText.width/2;
 
-        const worker = new Worker("./src/network.js");
-        worker.postMessage({type:'connect'})
+        globalNetworkWorker.postMessage({type:'connect'})
 
-        worker.onmessage = (event) =>{
+        localStorage.clear();
 
-            if (event.data === 'Connected') {
-                console.log("connectedToServer");
-            }
-            if (event.data === 'gameStart') {
-                this.connectionEstablished = true;
-            }
-        }
     }
 
     update(){
-        if (this.connectionEstablished) {
+        if (localStorage.getItem("gameScene")) {
             this.scene.start('gameScene');
-          }
+            localStorage.removeItem("gameScene");
+        }
     }
 
 }
