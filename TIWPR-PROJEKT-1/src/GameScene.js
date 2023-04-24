@@ -122,6 +122,57 @@ export default class GameScene extends Phaser.Scene {
                 }
             });
         })
+        if(localStorage.getItem('savedSceneObjects')){
+            const savedSceneData = JSON.parse(localStorage.getItem('savedSceneObjects'));
+            this.myLifes = savedSceneData.myLifes
+            this.oponentsLifes = savedSceneData.oponentsLifes
+            this.allShipPlaced = true;
+            savedSceneData.ships.forEach((ship,index) =>{
+                this.ships[index].x = ship.x;
+                this.ships[index].y = ship.y;
+                this.ships[index].setAngle(ship.angle);
+                this.ships[index].fieldsOfShip = ship.fieldsOfShip;
+            })
+            localStorage.setItem("turn", savedSceneData.turn)
+            savedSceneData.myGridGeoms.forEach(geom=>{
+                if(geom.type=="line"){
+                    this.myGrid.setLine(geom.x,geom.y);
+                }else{
+                    this.myGrid.setCircle(geom.x,geom.y,geom.r);
+                }
+            })
+            savedSceneData.enemyGridGeoms.forEach(geom=>{
+                if(geom.type=="line"){
+                    this.enemyGrid.setLine(geom.x,geom.y);
+                }else{
+                    this.enemyGrid.setCircle(geom.x,geom.y,geom.r);
+                }
+            })
+
+        }
+    }
+
+    saveSceneData(){
+        let gameDataObj={
+            ships:[],
+            myGridGeoms:this.myGrid.geoms,
+            enemyGridGeoms:this.enemyGrid.geoms,
+            graphics:this.graphics,
+            myLifes:this.myLifes,
+            oponentsLifes:this.oponentsLifes,
+            turn:Boolean(localStorage.getItem("turn"))
+        }
+        this.ships.forEach((ship)=>{
+            gameDataObj.ships.push({
+                x:ship.x,
+                y:ship.y,
+                angle:ship.angle,
+                fieldsOfShip:ship.fieldsOfShip
+            })
+        })
+
+        localStorage.setItem('savedSceneObjects',JSON.stringify(gameDataObj));
+
     }
 
     checkShoot(x,y){
@@ -133,14 +184,14 @@ export default class GameScene extends Phaser.Scene {
                     globalNetworkWorker.postMessage({type:"shootChecked",ship:true})
                     this.myLifes -=1;
                     localStorage.setItem("turn","true");
-                    this.saveScebeData()
+                    this.saveSceneData()
                     return;
                 }
             }
         }
         this.myGrid.setCrossOrCircle(false,x, y)
         localStorage.setItem("turn","true");
-        this.saveScebeData()
+        this.saveSceneData()
         globalNetworkWorker.postMessage({type:"shootChecked",ship:false})
     }
 
@@ -153,15 +204,6 @@ export default class GameScene extends Phaser.Scene {
         }
         localStorage.setItem("allShipPlaced","true");
         return true;
-    }
-    
-    saveScebeData(){
-        const sceneObjects = this.children.getAll();
-
-        const sceneObjectsJSON = JSON.stringify(sceneObjects);
-
-        localStorage.setItem('savedSceneObjects',sceneObjectsJSON);
-
     }
 
     update() {
@@ -184,7 +226,7 @@ export default class GameScene extends Phaser.Scene {
                 JSON.parse(localStorage.getItem("enemyGridToShot")).y
             )
             this.oponentsLifes -= 1;
-            this.saveScebeData()
+            this.saveSceneData()
             localStorage.removeItem("markEnemyBorad")
         }else if(localStorage.getItem("markEnemyBorad")==="false"){
             this.enemyGrid.setCrossOrCircle(
@@ -193,7 +235,7 @@ export default class GameScene extends Phaser.Scene {
                 JSON.parse(localStorage.getItem("enemyGridToShot")).y
             )
             localStorage.removeItem("markEnemyBorad")
-            this.saveScebeData()
+            this.saveSceneData()
         }
         
         if(localStorage.getItem("turn")==="true" && localStorage.getItem("allShipPlaced") === "true"){

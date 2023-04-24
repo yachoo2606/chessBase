@@ -1,7 +1,5 @@
 let socket;
 
-this.turn;
-
 const ADDRESS = "127.0.0.1";
 const PORT = 5555;
 

@@ -11,6 +11,7 @@ export default class Grid extends Phaser.GameObjects.GameObject{
         this.grid = scene.add.group();
         this.graphics = scene.add.graphics();
         this.graphics.setDepth(2);
+        this.geoms=[]
         for(var i=0;i<11;i++){
             for(var j=0;j<11;j++){
                 const sprite = this.grid.create(x+(i*scale), y+(j*scale), texture); 
@@ -52,6 +53,17 @@ export default class Grid extends Phaser.GameObjects.GameObject{
         })
     }
 
+    setLine(x,y){
+        this.graphics.lineStyle(2, 0xff0000, 1);
+        this.graphics.lineBetween(x-22,y-22,x+22,y+22);
+        this.graphics.lineBetween(x+22,y-22,x-22,y+22);
+    }
+
+    setCircle(x,y,r=23){
+        this.graphics.lineStyle(2, 0xffffff, 1);
+        this.graphics.strokeCircle(x,y,r)
+    }
+
     setCrossOrCircle(mode, x, y){
         this.grid.children.iterate((sprite)=>{
             if(sprite.coordinates.x === x && sprite.coordinates.y ===y){
@@ -61,10 +73,22 @@ export default class Grid extends Phaser.GameObjects.GameObject{
                     this.graphics.lineStyle(2, 0xff0000, 1);
                     this.graphics.lineBetween(sprite.x-22,sprite.y-22,sprite.x+22,sprite.y+22);
                     this.graphics.lineBetween(sprite.x+22,sprite.y-22,sprite.x-22,sprite.y+22);
+                    this.geoms.push({
+                        type:"line",
+                        x:sprite.x,
+                        y:sprite.y,
+                        r:undefined
+                    })
                 }else{
                     this.scene.sound.play('shootSoundWater',{volume:0.5})
                     this.graphics.lineStyle(2, 0xffffff, 1);
                     this.graphics.strokeCircle(sprite.x,sprite.y,23)
+                    this.geoms.push({
+                        type:"circle",
+                        x:sprite.x,
+                        y:sprite.y,
+                        r:23
+                    })
                 }
             }
         })
