@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { TextButton } from "./TextButton";
 
 export default class EndingScene extends Phaser.Scene {
     constructor() {
@@ -29,9 +30,11 @@ export default class EndingScene extends Phaser.Scene {
             text.setPosition(this.cameras.main.centerX, this.cameras.main.centerY);
 
         }
-
+        
         this.exitButton = new TextButton(this,window.innerWidth/2,window.innerHeight,"Exit",{ fontSize: '64px', fill: '#fff' },()=>{
-            this.scene.start('menuScene')
+            // this.scene.start('menuScene')
+            localStorage.clear();
+            window.location.reload();
         })
         this.add.existing(this.exitButton);
         

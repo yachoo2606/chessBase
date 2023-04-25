@@ -17,14 +17,28 @@ export default class LoadingScene extends Phaser.Scene{
         
         this.waitingText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY,"Waiting for opponent....",{ fontSize: '64px', fill: '#fff' });
         this.waitingText.x = this.waitingText.x - this.waitingText.width/2;
-
-        globalNetworkWorker.postMessage({type:'connect'})
-
-        localStorage.clear();
+        
+        if(localStorage.getItem("GAMEID")){
+            console.log({type:'Reconnect', gid: localStorage.getItem("GAMEID"),playerNumber: localStorage.getItem("playerNumber")})
+            if(localStorage.getItem("playerNumber")=="true"){
+                globalNetworkWorker.postMessage({type:'Reconnect', gid: localStorage.getItem("GAMEID"),playerNumber: 1})
+            }else{
+                globalNetworkWorker.postMessage({type:'Reconnect', gid: localStorage.getItem("GAMEID"),playerNumber: 0})
+            }
+            
+        }else{
+            console.log({type:'connect'})
+            globalNetworkWorker.postMessage({type:'NewGame'})
+        }
+        // localStorage.clear();
 
     }
 
     update(){
+        if (localStorage.getItem("ResumeGame")) {
+            this.scene.start('gameScene');
+            localStorage.removeItem("ResumeGame");
+        }
         if (localStorage.getItem("gameScene")) {
             this.scene.start('gameScene');
             localStorage.removeItem("gameScene");

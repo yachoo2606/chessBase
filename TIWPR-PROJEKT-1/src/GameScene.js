@@ -160,7 +160,7 @@ export default class GameScene extends Phaser.Scene {
             graphics:this.graphics,
             myLifes:this.myLifes,
             oponentsLifes:this.oponentsLifes,
-            turn:Boolean(localStorage.getItem("turn"))
+            turn:localStorage.getItem("turn")
         }
         this.ships.forEach((ship)=>{
             gameDataObj.ships.push({

@@ -8,6 +8,7 @@ globalNetworkWorker.onmessage = (event) =>{
 
     if(event.data.type === "turn"){
         localStorage.setItem("turn", event.data.value)
+        localStorage.setItem("playerNumber", event.data.value)
         localStorage.setItem("GAMEID", event.data.gameID)
     }
 

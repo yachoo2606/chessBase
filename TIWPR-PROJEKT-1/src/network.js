@@ -3,13 +3,13 @@ let socket;
 const ADDRESS = "127.0.0.1";
 const PORT = 5555;
 
-self.onmessage = (event)=>{
-    if(event.data.type === 'connect'){
-        socket = new WebSocket(`ws://${ADDRESS}:${PORT}`);
-        
+function connect(mode){
+    socket = new WebSocket(`ws://${ADDRESS}:${PORT}`);
+    
         socket.addEventListener('open', ()=>{
             console.log('connected to Server')
             self.postMessage({type:"Connected", value:true});
+            socket.send(mode)
         })
         socket.addEventListener("message", (event) => {
             console.log("Message from server ", event.data);
@@ -34,7 +34,14 @@ self.onmessage = (event)=>{
         socket.addEventListener("error", (event)=>{
             console.log("WebSocket error: ", event);
         })
-        
+}
+
+self.onmessage = (event)=>{
+    if(event.data.type === 'NewGame'){
+        connect(`${event.data.type}|${event.data.gid}|${event.data.playerNumber}`);
+    }else if(event.data.type == "Reconnect"){
+        console.log("ATEMPTING RECONNECTING")
+        connect(`${event.data.type}|${event.data.gid}|${event.data.playerNumber}`)
     }else if(event.data.type == "shoot"){
         console.log("sending coords to opponent:", event.data.coords)
         socket.send("shoot|"+JSON.stringify(event.data.coords))
@@ -42,7 +49,8 @@ self.onmessage = (event)=>{
     else if(event.data.type == "shootChecked"){
         socket.send("shootCheked|"+event.data.ship)
     }
-    // else if(event.data.type == "allPlaced"){
-    //     socket.send(JSON.stringify(""))
-    // }
+    else if(event.data.type == "allPlaced"){
+        socket.send(JSON.stringify("allplaced"))
+    }
+    
 }
