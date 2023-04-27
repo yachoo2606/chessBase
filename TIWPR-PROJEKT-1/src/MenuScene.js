@@ -21,6 +21,11 @@ export default class MenuScene extends Phaser.Scene{
         })
         this.add.existing(this.playButton)
 
+        this.clearButton = new TextButton(this,window.innerWidth/2,1.8*window.innerHeight/3,"Clear storage",{ fontSize: '64px', fill: '#fff' }, ()=>{
+            localStorage.clear();
+        })
+        this.add.existing(this.clearButton);
+
         this.exitButton = new TextButton(this,window.innerWidth/2,window.innerHeight/2+200,"Exit",{ fontSize: '64px', fill: '#fff' },()=>{
             window.close();
         })

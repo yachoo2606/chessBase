@@ -31,7 +31,13 @@ export default class EndingScene extends Phaser.Scene {
 
         }
         
-        this.exitButton = new TextButton(this,window.innerWidth/2,window.innerHeight,"Exit",{ fontSize: '64px', fill: '#fff' },()=>{
+        this.clearButton = new TextButton(this,window.innerWidth/2,2*window.innerHeight/3,"Clear storage",{ fontSize: '64px', fill: '#fff' }, ()=>{
+            localStorage.clear();
+        })
+        this.add.existing(this.clearButton);
+
+
+        this.exitButton = new TextButton(this,window.innerWidth/2,window.innerHeight/4*3,"Exit",{ fontSize: '64px', fill: '#fff' },()=>{
             // this.scene.start('menuScene')
             localStorage.clear();
             window.location.reload();

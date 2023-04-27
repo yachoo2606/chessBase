@@ -22,7 +22,11 @@ globalNetworkWorker.onmessage = (event) =>{
         localStorage.setItem("checkShoot", JSON.stringify({x:event.data.x, y:event.data.y}))
     }
     if (event.data.type === "shootCheked"){
-        localStorage.setItem("markEnemyBorad", event.data.value);
+        if(event.data.value==1){
+            localStorage.setItem("markEnemyBorad", "true")
+        }else{
+            localStorage.setItem("markEnemyBorad", "false")
+        }
     }
 }
 

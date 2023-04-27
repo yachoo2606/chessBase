@@ -1,15 +1,15 @@
 import asyncio
+import struct
 import websockets
 import tracemalloc
 import uuid
-import shortuuid
 
 tracemalloc.start()
 
 games = {}
 
 PORT = 5555
-ADDRESS = 'localhost'
+ADDRESS = '0.0.0.0'
 
 
 async def server(websocket, path):
@@ -21,8 +21,8 @@ async def server(websocket, path):
 
         while True:
             message = await websocket.recv()
-            print(f"ASSIGN PLAYER: {message}")
-            if message.startswith("NewGame"):
+            print(f"ASSIGN PLAYER({websocket.remote_address}): {message}")
+            if message[0] == 0:
                 for gid, game in games.items():
                     if len(game) == 1:
                         game_id = gid
@@ -30,18 +30,22 @@ async def server(websocket, path):
                         game.append(websocket)
                         print(f"CLIENT CONNECTED FROM: {websocket.remote_address} to {game_id}")
                         return
-                game_id = str(shortuuid.ShortUUID().random(length=16))
+                game_id = uuid.uuid4().bytes
                 player_num = 0
                 games[game_id] = [websocket]
                 print(f"CLIENT CONNECTED FROM: {websocket.remote_address} to {game_id}")
+                print(games)
                 break
-            elif message.startswith("Reconnect"):
+            elif message[0] == 1:
                 # Extract game_id from the message
-                game_id = message.split("|")[1]
+                game_id = message[2:]
+                print(games)
+                print(f"PLAYER {message[1]} tries to recconect to game {game_id}")
+                print(f"{game_id}, {len(game_id)}")
                 if game_id in games:
-                    player_num = int(message.split("|")[2])
-                    games[game_id][int(message.split("|")[2])] = websocket
-                    print(f"PLAYER RECONNECTED - CLIENT CONNECTED FROM: {websocket.remote_address} to {game_id}")
+                    player_num = int(message[1])
+                    games[game_id][player_num] = websocket
+                    print(f"PLAYER {player_num} RECONNECTED - CLIENT CONNECTED FROM: {websocket.remote_address} to {game_id}")
                     break
                 else:
                     await websocket.send(f"GameNotFound|{game_id}")
@@ -55,7 +59,8 @@ async def server(websocket, path):
         while len(games[game_id]) < 2:
             await asyncio.sleep(1)
 
-        await games[game_id][player_num].send(f"GameStart|{game_id}|{player_num}")
+        await games[game_id][player_num].send(struct.pack(">hh16s", 0, player_num, game_id))
+        print(struct.pack(">hh16s", 0, player_num, game_id))
 
         while True:
             try:
