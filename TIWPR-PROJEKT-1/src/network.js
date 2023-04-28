@@ -51,8 +51,10 @@ function connect(mode){
                 }else if(datas.getUint8(0,false) == 3){
                     console.log("shootCheked: ",datas.getUint8(1,false))
                     self.postMessage({type:"shootCheked",value:datas.getUint8(1,false)})
+                }else if(datas.getUint16(0,false) == 4){
+                    console.log("PLAYER DISCONNECTED")
+                    self.postMessage({type:"DISCONNECTED"})
                 }
-
             })
             );
         });
@@ -115,4 +117,5 @@ self.onmessage = (event)=>{
     1 - RECONNECT (1,)
     2 - shoot (2,x,y)
     3 - shootcheked (3,t/f)
+    4 - GAME END
 */

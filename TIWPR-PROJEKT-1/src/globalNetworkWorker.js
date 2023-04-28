@@ -28,6 +28,10 @@ globalNetworkWorker.onmessage = (event) =>{
             localStorage.setItem("markEnemyBorad", "false")
         }
     }
+    if (event.data.type === "DISCONNECTED"){
+        localStorage.clear();
+        window.location.reload();
+    }
 }
 
 export default globalNetworkWorker;

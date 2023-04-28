@@ -15,6 +15,7 @@ ADDRESS = '0.0.0.0'
 async def server(websocket, path):
     game_id = None
     player_num = None
+    reconnect_timeout = 60
 
     async def assign_player():
         nonlocal game_id, player_num
@@ -28,6 +29,7 @@ async def server(websocket, path):
                         game_id = gid
                         player_num = 1
                         game.append(websocket)
+                        print(games)
                         print(f"CLIENT CONNECTED FROM: {websocket.remote_address} to {game_id}")
                         return
                 game_id = uuid.uuid4().bytes
@@ -48,7 +50,8 @@ async def server(websocket, path):
                     print(f"PLAYER {player_num} RECONNECTED - CLIENT CONNECTED FROM: {websocket.remote_address} to {game_id}")
                     break
                 else:
-                    await websocket.send(f"GameNotFound|{game_id}")
+                    # await websocket.send(f"GameNotFound|{game_id}")
+                    await websocket.send(struct.pack(">h", 4))
                     continue
 
     await assign_player()
@@ -64,9 +67,14 @@ async def server(websocket, path):
 
         while True:
             try:
-                message = await websocket.recv()
+                message = await asyncio.wait_for(websocket.recv(), reconnect_timeout)
                 print(f"\tmessage from: {websocket.remote_address} : {message}")
                 await games[game_id][not player_num].send(message)
+            except asyncio.TimeoutError:
+                print(f"PLAYER {player_num} DID NOT RECONNECT IN {reconnect_timeout} SECONDS - GAME ENDED")
+                await asyncio.gather(*[player.send(struct.pack(">h", 4)) for player in games[game_id]])
+                del games[game_id]
+                break
             except websockets.exceptions.ConnectionClosedOK:
                 print(f"GAME {game_id} USER DISCONNECTED")
             await asyncio.gather(*[ws.send("Ready") for ws in games[game_id]])
