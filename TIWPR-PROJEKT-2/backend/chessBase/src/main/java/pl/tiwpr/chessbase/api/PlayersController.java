@@ -45,14 +45,11 @@ public class PlayersController {
             throw new MissingDataException("Name and last name must not be null");
         }
         PlayerView addedPlayer = this.playersService.createPlayer(player);
-        log.info("Player Added: "+addedPlayer);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedPlayer);
     }
 
     @GetMapping("/{id}")
     public Optional<PlayerView> welcomePage(@PathVariable @NonNull Long id){
-        Optional<PlayerView> requestedPlayer = this.playersService.getOneById(id);
-        log.info("Details of Player: "+ requestedPlayer.toString());
-        return requestedPlayer;
+        return this.playersService.getOneById(id);
     }
 }
