@@ -8,6 +8,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerView {
-    long id;
+    Long id;
     String name;
+
+
+    @Override
+    public String toString() {
+        return "{ " +
+                "id="+ id.toString()+ ", " +
+                "name= " + name +
+                "}";
+    }
 }
