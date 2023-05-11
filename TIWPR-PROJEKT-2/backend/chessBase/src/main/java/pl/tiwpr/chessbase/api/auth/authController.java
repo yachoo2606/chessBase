@@ -19,7 +19,7 @@ import pl.tiwpr.chessbase.services.AuthenticationService;
 
 @Validated
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/tokens")
 @Slf4j
 @RequiredArgsConstructor
 public class authController {
@@ -27,12 +27,7 @@ public class authController {
     @Autowired
     private final AuthenticationService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws DataIntegrityViolationException{
-        return ResponseEntity.ok(authService.register(request));
-    }
-
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws AuthenticationException {
         return ResponseEntity.ok(authService.authenticate(request));
     }
