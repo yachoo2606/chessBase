@@ -23,7 +23,7 @@ public class ExceptionsHandlers {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public String handleDataIntegrityViolationException(DataIntegrityViolationException e){
-        return "Failed to create user. User with provided email already exists.";
+        return e.getMessage();
     }
 
     @ExceptionHandler(AuthenticationException.class)
