@@ -27,26 +27,25 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf()
-                .disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/auth/**")
-                    .permitAll()
-                .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.GET,"/players")
-                    .permitAll()
-                .anyRequest()
-                    .authenticated()
-                .and()
-                .exceptionHandling()
-                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                    .accessDeniedHandler(new CustomAccessDeniedHandler())
-                .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .csrf()
+        .disable()
+        .authorizeHttpRequests()
+        .requestMatchers("/tokens/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/admin/users").permitAll()
+        .requestMatchers(HttpMethod.GET, "/admin/users").hasAuthority("ADMIN")
+        .requestMatchers(HttpMethod.GET, "/players").permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .exceptionHandling()
+        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        .accessDeniedHandler(new CustomAccessDeniedHandler())
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authenticationProvider(authenticationProvider)
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }
