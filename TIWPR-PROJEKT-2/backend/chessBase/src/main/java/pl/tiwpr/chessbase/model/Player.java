@@ -36,6 +36,10 @@ public class Player {
     private Gender gender;
 
     @ManyToOne
+    @JoinColumn(name = "title_id")
+    private Title title;
+
+    @ManyToOne
     @JoinColumn(name = "club_id")
     @JsonBackReference
     private Club club;
