@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -27,9 +28,8 @@ public class Player {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date birtDate;
+    @Column(nullable = false,columnDefinition = "DATE")
+    private LocalDate birthDate;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
