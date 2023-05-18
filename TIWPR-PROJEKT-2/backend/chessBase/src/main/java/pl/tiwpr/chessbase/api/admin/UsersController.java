@@ -13,7 +13,6 @@ import pl.tiwpr.chessbase.model.auth.User;
 import pl.tiwpr.chessbase.repositories.auth.UserRepository;
 import pl.tiwpr.chessbase.services.AuthenticationService;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,11 +36,13 @@ public class UsersController {
         if(tempUser.isPresent()){
             throw new DataIntegrityViolationException("User with provided email already exists");
         }
+        log.info("New User Registered: "+request.getEmail());
         return ResponseEntity.ok(authService.register(request));
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(){
+        log.info("Requested list of users");
         return ResponseEntity.ok().body(userRepository.findAll());
     }
 

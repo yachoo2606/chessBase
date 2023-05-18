@@ -11,9 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
 import pl.tiwpr.chessbase.model.Club;
-import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.ClubView;
-import pl.tiwpr.chessbase.model.views.PlayerView;
 import pl.tiwpr.chessbase.services.ClubsService;
 
 import java.util.Optional;
@@ -52,4 +50,15 @@ public class ClubsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedClub);
     }
 
+    @GetMapping("/{codeName}")
+    public ResponseEntity<Club> getClubByCodeName(@PathVariable String codeName){
+       Club requestedClub = clubsService.getClubByCodeName(codeName)
+                .orElseThrow(() -> new MissingDataException("Club not found"));
+       return ResponseEntity.status(HttpStatus.OK).body(requestedClub);
+    }
+
+    @PostMapping("/{codeName}/players")
+    public ResponseEntity<Club> addPlayerToClub(@PathVariable String codeName, @RequestParam("playerId") Long playerId){
+        return ResponseEntity.ok().body(clubsService.addPlayerToClub(codeName, playerId));
+    }
 }

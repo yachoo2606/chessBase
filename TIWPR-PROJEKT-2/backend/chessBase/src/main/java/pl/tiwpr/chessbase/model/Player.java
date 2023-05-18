@@ -1,7 +1,11 @@
 package pl.tiwpr.chessbase.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "players")
@@ -20,6 +24,11 @@ public class Player {
 
     @Column(nullable = false)
     private String lastName;
+
+    @ManyToOne
+    @JoinColumn(name = "club_id")
+    @JsonBackReference
+    private Club club;
 
     @Override
     public String toString() {
