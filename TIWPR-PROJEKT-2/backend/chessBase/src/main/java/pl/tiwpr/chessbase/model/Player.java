@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "players")
 @Setter
@@ -24,6 +26,14 @@ public class Player {
 
     @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date birtDate;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @ManyToOne
     @JoinColumn(name = "club_id")

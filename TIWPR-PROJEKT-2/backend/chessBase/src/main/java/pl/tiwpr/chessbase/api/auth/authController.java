@@ -27,7 +27,6 @@ public class authController {
 
     @PostMapping
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws AuthenticationException {
-        System.out.println(request);
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
