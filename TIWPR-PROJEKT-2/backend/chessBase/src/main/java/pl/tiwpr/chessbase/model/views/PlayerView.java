@@ -19,12 +19,19 @@ public class PlayerView {
     Gender gender;
     Title title;
     ClubView club;
+    Integer ELO;
 
     @Override
     public String toString() {
         return "{ " +
                 "id="+ id.toString()+ ", " +
                 "name= " + name +
+                "lastName" +lastName+
+                "birthDate=" +birthDate+
+                "gender=" +gender+
+                "title="+ title+
+                "club=" +club+
+                "ELO="+ ELO+
                 "}";
     }
 }

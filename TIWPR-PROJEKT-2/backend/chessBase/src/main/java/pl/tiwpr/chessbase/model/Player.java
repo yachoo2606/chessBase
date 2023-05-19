@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "players")
@@ -35,6 +34,9 @@ public class Player {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column()
+    private Integer ELO = 1000;
+
     @ManyToOne
     @JoinColumn(name = "title_id")
     private Title title;
@@ -48,8 +50,13 @@ public class Player {
     public String toString() {
         return "{ " +
                 "id="+ id.toString()+ ", " +
-                "name= " + name + ", " +
-                "surname= " + lastName +
+                "name= " + name +
+                "lastName" +lastName+
+                "birthDate=" +birthDate+
+                "gender=" +gender+
+                "title="+ title+
+                "club=" +club+
+                "ELO="+ ELO+
                 "}";
     }
 }
