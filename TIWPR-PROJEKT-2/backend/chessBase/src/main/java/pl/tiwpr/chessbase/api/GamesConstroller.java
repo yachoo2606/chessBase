@@ -43,7 +43,7 @@ public class GamesConstroller {
 
     @PostMapping
     public Game addGame(@RequestBody Game game){
-        if(playersService.getOneById(game.getBlackPlayer().getId()).isEmpty() || playersService.getOneById(game.getWhitePlayer().getId()).isEmpty()){
+        if(playersService.getOneByIdOptional(game.getBlackPlayer().getId()).isEmpty() || playersService.getOneByIdOptional(game.getWhitePlayer().getId()).isEmpty()){
             throw new MissingDataException("There is no player with provided ID");
         }
         return gamesService.createGame(game);

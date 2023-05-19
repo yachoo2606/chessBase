@@ -51,4 +51,30 @@ public class ClubsService {
         return toAddClub;
     }
 
+    public String transferPlayers(Player player1, Player player2){
+
+        if(player1.getClub()==null) throw new MissingDataException("player: "+player1.getId().toString()+" has no club");
+        if(player2.getClub()==null) throw new MissingDataException("player: "+player2.getId().toString()+" has no club");
+
+        Club club1 = clubRepository.findOneByCodeName(player1.getClub().getCodeName()).orElseThrow(() -> new MissingDataException("There is no club with given codename"));
+        Club club2 = clubRepository.findOneByCodeName(player2.getClub().getCodeName()).orElseThrow(() -> new MissingDataException("There is no club with given codename"));
+
+        club1.getPlayers().remove(player1);
+        club2.getPlayers().remove(player2);
+
+        player1.setClub(club2);
+        player2.setClub(club1);
+        playersRepository.save(player1);
+        playersRepository.save(player2);
+
+        club1.getPlayers().add(player2);
+        club2.getPlayers().add(player1);
+
+        clubRepository.save(club1);
+        clubRepository.save(club2);
+
+        return "transferred";
+
+    }
+
 }

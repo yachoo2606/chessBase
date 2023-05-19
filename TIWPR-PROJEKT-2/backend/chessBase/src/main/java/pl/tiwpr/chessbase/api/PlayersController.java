@@ -50,6 +50,6 @@ public class PlayersController {
 
     @GetMapping("/{id}")
     public Optional<PlayerView> welcomePage(@PathVariable @NonNull Long id){
-        return this.playersService.getOneById(id);
+        return this.playersService.getOneByIdOptional(id);
     }
 }

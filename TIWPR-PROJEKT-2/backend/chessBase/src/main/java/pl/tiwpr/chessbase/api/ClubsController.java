@@ -1,5 +1,6 @@
 package pl.tiwpr.chessbase.api;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -11,8 +12,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
 import pl.tiwpr.chessbase.model.Club;
+import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.ClubView;
 import pl.tiwpr.chessbase.services.ClubsService;
+import pl.tiwpr.chessbase.services.PlayersService;
 
 import java.util.Optional;
 
@@ -22,9 +25,12 @@ import java.util.Optional;
 @RequestMapping("/clubs")
 public class ClubsController {
     private final ClubsService clubsService;
+    private final PlayersService playersService;
 
-    public ClubsController(ClubsService clubsService) {
+
+    public ClubsController(ClubsService clubsService, PlayersService playersService) {
         this.clubsService = clubsService;
+        this.playersService = playersService;
     }
 
     @GetMapping
@@ -36,7 +42,7 @@ public class ClubsController {
     }
 
     @PostMapping
-    public ResponseEntity<ClubView> addPlayer(@RequestBody Club club){
+    public ResponseEntity<ClubView> addClub(@RequestBody Club club){
         Optional<Club> tempClub = clubsService.getClubByCodeName(club.getCodeName());
         if(tempClub.isPresent()){
             throw new DataIntegrityViolationException("Club with provided CodeName already exists");
@@ -61,4 +67,13 @@ public class ClubsController {
     public ResponseEntity<Club> addPlayerToClub(@PathVariable String codeName, @RequestParam("playerId") Long playerId){
         return ResponseEntity.ok().body(clubsService.addPlayerToClub(codeName, playerId));
     }
+
+    @PostMapping("/transfer")
+    public String transferPlayers(@NonNull @RequestParam Long p1id, @NonNull @RequestParam Long p2id){
+        Player player1 = playersService.getOneById(p1id);
+        Player player2 = playersService.getOneById(p2id);
+
+        return clubsService.transferPlayers(player1,player2);
+    }
+
 }

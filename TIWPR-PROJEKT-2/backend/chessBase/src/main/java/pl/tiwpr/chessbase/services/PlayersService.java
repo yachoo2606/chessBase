@@ -37,13 +37,21 @@ public class PlayersService {
         return this.modelMapper.map(addedPlayer, PlayerView.class);
     }
 
-    public Optional<PlayerView> getOneById(Long id){
+    public Optional<PlayerView> getOneByIdOptional(Long id){
         Optional<Player> requestedPlayer = playersRepository.findOneById(id);
 
         if(requestedPlayer.isEmpty()) throw new MissingDataException("There is no user with given ID");
 
         log.info("Details of Player: "+ requestedPlayer.toString());
         return  requestedPlayer.map(player -> modelMapper.map(player, PlayerView.class));
+
+    }
+
+    public Player getOneById(Long id){
+        Optional<Player> requestedPlayer = playersRepository.findOneById(id);
+
+        if(requestedPlayer.isEmpty()) throw new MissingDataException("There is no user with given ID");
+        return  requestedPlayer.get();
 
     }
 
