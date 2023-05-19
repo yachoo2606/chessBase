@@ -31,7 +31,7 @@ public class Club {
 
     @OneToMany(mappedBy = "club")
     @JsonManagedReference
-    List<Player> players;
+    private  List<Player> players;
 
     @Override
     public String toString(){
