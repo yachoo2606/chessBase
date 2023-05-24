@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
+import pl.tiwpr.chessbase.model.Gender;
 import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.PlayerView;
 import pl.tiwpr.chessbase.repositories.PlayersRepository;
@@ -28,6 +29,10 @@ public class PlayersService {
 
     public Page<PlayerView> getAllPlayers(Pageable pageable){
         return playersRepository.findAll(pageable)
+                .map(player -> modelMapper.map(player,PlayerView.class));
+    }
+    public Page<PlayerView> getAllByGender(Pageable pageable, Gender gender){
+        return playersRepository.findAllByGender(pageable, gender)
                 .map(player -> modelMapper.map(player,PlayerView.class));
     }
 

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
+import pl.tiwpr.chessbase.model.Gender;
 import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.PlayerView;
 import pl.tiwpr.chessbase.services.PlayersService;
@@ -32,10 +33,17 @@ public class PlayersController {
 
     @GetMapping
     public Page<PlayerView> getAllPlayers(@RequestParam(defaultValue ="1") int page,
-                                          @RequestParam(defaultValue = "#{playersRepository.count()+1}") int size){
+                                          @RequestParam(defaultValue = "#{playersRepository.count()+1}") int size,
+                                          @RequestParam(required = false) Gender gender){
         Pageable pageable = PageRequest.of(page-1, size);
-        log.info("All Players Requested");
-        return this.playersService.getAllPlayers(pageable);
+
+        if(gender!=null){
+            log.info("All Players Requested by gender");
+            return this.playersService.getAllByGender(pageable,gender);
+        }else{
+            log.info("All Players Requested");
+            return this.playersService.getAllPlayers(pageable);
+        }
     }
 
     @PostMapping
