@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pl.tiwpr.chessbase.exceptions.MissingDataException;
 import pl.tiwpr.chessbase.model.Game;
 import pl.tiwpr.chessbase.model.Result;
 import pl.tiwpr.chessbase.services.GamesService;
@@ -42,21 +43,24 @@ public class GamesConstroller {
     }
 
     @PostMapping
-    public Game addGame(@RequestBody Game game){
+    public Game addGame(@RequestBody Game game) throws ClassNotFoundException {
         if(playersService.getOneByIdOptional(game.getBlackPlayer().getId()).isEmpty() || playersService.getOneByIdOptional(game.getWhitePlayer().getId()).isEmpty()){
-            throw new MissingDataException("There is no player with provided ID");
+            throw new ClassNotFoundException("There is no player with provided ID");
         }
         return gamesService.createGame(game);
     }
 
     @GetMapping("/{id}")
-    public Game getSpecificGame(@PathVariable Long id){
+    public Game getSpecificGame(@PathVariable Long id) throws ClassNotFoundException {
         Optional<Game> game = gamesService.getOneGame(id);
-
-        if(game.isEmpty()) throw new MissingDataException("There is no game with given ID");
+        if(game.isEmpty()) throw new ClassNotFoundException("There is no game with given ID");
 
         return game.get();
 
+    }
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<String> getGameStatistics(@PathVariable String id){
+        return new ResponseEntity<String>("Site in Build",HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @GetMapping("/players/{id}")

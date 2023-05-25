@@ -33,4 +33,9 @@ public class ExceptionsHandlers {
         return "Bad email or password.";
     }
 
+    @ExceptionHandler(ClassNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public String handleNotFoundException(ClassNotFoundException e){ return e.getMessage();}
+
 }
