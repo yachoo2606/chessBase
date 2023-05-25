@@ -3,6 +3,7 @@ package pl.tiwpr.chessbase.exceptions;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,5 +38,10 @@ public class ExceptionsHandlers {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public String handleNotFoundException(ClassNotFoundException e){ return e.getMessage();}
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String handleMissingRequestHeaderException(MissingRequestHeaderException e){return e.getMessage();}
 
 }

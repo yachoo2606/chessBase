@@ -16,6 +16,7 @@ import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.ClubView;
 import pl.tiwpr.chessbase.services.ClubsService;
 import pl.tiwpr.chessbase.services.PlayersService;
+import pl.tiwpr.chessbase.services.tokens.TokenService;
 
 import java.util.Optional;
 
@@ -26,11 +27,13 @@ import java.util.Optional;
 public class ClubsController {
     private final ClubsService clubsService;
     private final PlayersService playersService;
+    private final TokenService tokenService;
 
 
-    public ClubsController(ClubsService clubsService, PlayersService playersService) {
+    public ClubsController(ClubsService clubsService, PlayersService playersService, TokenService tokenService) {
         this.clubsService = clubsService;
         this.playersService = playersService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
@@ -42,7 +45,13 @@ public class ClubsController {
     }
 
     @PostMapping
-    public ResponseEntity<ClubView> addClub(@RequestBody Club club){
+    public ResponseEntity<?> addClub(@RequestHeader("Token") String postToken ,@RequestBody Club club){
+
+        if(!tokenService.isTokenValid(postToken)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicated Request");
+        }
+        tokenService.invalidateToken(postToken);
+
         Optional<Club> tempClub = clubsService.getClubByCodeName(club.getCodeName());
         if(tempClub.isPresent()){
             throw new DataIntegrityViolationException("Club with provided CodeName already exists");
@@ -64,16 +73,28 @@ public class ClubsController {
     }
 
     @PostMapping("/{codeName}/players")
-    public ResponseEntity<Club> addPlayerToClub(@PathVariable String codeName, @RequestParam("playerId") Long playerId){
+    public ResponseEntity<?> addPlayerToClub(@RequestHeader("Token") String postToken ,@PathVariable String codeName, @RequestParam("playerId") Long playerId){
+
+        if(!tokenService.isTokenValid(postToken)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicated Request");
+        }
+        tokenService.invalidateToken(postToken);
+
         return ResponseEntity.ok().body(clubsService.addPlayerToClub(codeName, playerId));
     }
 
     @PostMapping("/transfer")
-    public String transferPlayers(@NonNull @RequestParam Long p1id, @NonNull @RequestParam Long p2id){
+    public ResponseEntity<?> transferPlayers(@RequestHeader("Token") String postToken ,@NonNull @RequestParam Long p1id, @NonNull @RequestParam Long p2id){
+
+        if(!tokenService.isTokenValid(postToken)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicated Request");
+        }
+        tokenService.invalidateToken(postToken);
+
         Player player1 = playersService.getOneById(p1id);
         Player player2 = playersService.getOneById(p2id);
 
-        return clubsService.transferPlayers(player1,player2);
+        return ResponseEntity.ok().body(clubsService.transferPlayers(player1,player2));
     }
 
 }

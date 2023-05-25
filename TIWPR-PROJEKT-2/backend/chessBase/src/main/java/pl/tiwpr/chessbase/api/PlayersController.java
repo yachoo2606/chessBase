@@ -15,6 +15,7 @@ import pl.tiwpr.chessbase.model.Gender;
 import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.PlayerView;
 import pl.tiwpr.chessbase.services.PlayersService;
+import pl.tiwpr.chessbase.services.tokens.TokenService;
 
 import java.util.Optional;
 
@@ -26,9 +27,11 @@ public class PlayersController {
 
 
     private final PlayersService playersService;
+    private final TokenService tokenService;
 
-    public PlayersController(PlayersService playersService) {
+    public PlayersController(PlayersService playersService, TokenService tokenService) {
         this.playersService = playersService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
@@ -47,7 +50,13 @@ public class PlayersController {
     }
 
     @PostMapping
-    public ResponseEntity<PlayerView> addPlayer(@RequestBody Player player){
+    public ResponseEntity<?> addPlayer(@RequestHeader("Token") String postToken ,@RequestBody Player player){
+
+        if(!tokenService.isTokenValid(postToken)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicated Request");
+        }
+        tokenService.invalidateToken(postToken);
+
         if(player.getName() == null || player.getLastName()==null){
             log.warn("Player add failed: Name and last name must not be null");
             throw new MissingDataException("Name and last name must not be null");

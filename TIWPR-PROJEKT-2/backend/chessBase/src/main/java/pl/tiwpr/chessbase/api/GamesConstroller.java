@@ -13,6 +13,7 @@ import pl.tiwpr.chessbase.model.Game;
 import pl.tiwpr.chessbase.model.Result;
 import pl.tiwpr.chessbase.services.GamesService;
 import pl.tiwpr.chessbase.services.PlayersService;
+import pl.tiwpr.chessbase.services.tokens.TokenService;
 
 import java.util.Optional;
 
@@ -24,9 +25,12 @@ public class GamesConstroller {
     private final GamesService gamesService;
     private final PlayersService playersService;
 
-    public GamesConstroller(GamesService gamesService, PlayersService playersService) {
+    private final TokenService tokenService;
+
+    public GamesConstroller(GamesService gamesService, PlayersService playersService, TokenService tokenService) {
         this.gamesService = gamesService;
         this.playersService = playersService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
@@ -43,11 +47,17 @@ public class GamesConstroller {
     }
 
     @PostMapping
-    public Game addGame(@RequestBody Game game) throws ClassNotFoundException {
+    public ResponseEntity<?> addGame(@RequestHeader("Token") String postToken,@RequestBody Game game) throws ClassNotFoundException {
+
+        if(!tokenService.isTokenValid(postToken)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicated Request");
+        }
+        tokenService.invalidateToken(postToken);
+
         if(playersService.getOneByIdOptional(game.getBlackPlayer().getId()).isEmpty() || playersService.getOneByIdOptional(game.getWhitePlayer().getId()).isEmpty()){
             throw new ClassNotFoundException("There is no player with provided ID");
         }
-        return gamesService.createGame(game);
+        return ResponseEntity.ok().body(gamesService.createGame(game));
     }
 
     @GetMapping("/{id}")
