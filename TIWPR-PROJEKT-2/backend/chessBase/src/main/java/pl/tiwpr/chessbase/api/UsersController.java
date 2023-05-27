@@ -1,4 +1,4 @@
-package pl.tiwpr.chessbase.api.admin;
+package pl.tiwpr.chessbase.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

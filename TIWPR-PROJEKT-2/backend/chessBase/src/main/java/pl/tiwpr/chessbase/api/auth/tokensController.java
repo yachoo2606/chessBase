@@ -15,14 +15,14 @@ import pl.tiwpr.chessbase.services.tokens.TokenService;
 @Validated
 @RestController
 @RequestMapping("/tokens")
-public class authController {
+public class tokensController {
 
     private final AuthenticationService authService;
 
     private final TokenService tokenService;
 
     @Autowired
-    public authController(AuthenticationService authService,
+    public tokensController(AuthenticationService authService,
                           TokenService tokenService) {
         this.authService = authService;
         this.tokenService = tokenService;
