@@ -11,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
+import pl.tiwpr.chessbase.model.Game;
 import pl.tiwpr.chessbase.model.Gender;
 import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.PlayerView;
+import pl.tiwpr.chessbase.services.GamesService;
 import pl.tiwpr.chessbase.services.PlayersService;
 import pl.tiwpr.chessbase.services.tokens.TokenService;
 
@@ -28,10 +30,12 @@ public class PlayersController {
 
     private final PlayersService playersService;
     private final TokenService tokenService;
+    private final GamesService gamesService;
 
-    public PlayersController(PlayersService playersService, TokenService tokenService) {
+    public PlayersController(PlayersService playersService, TokenService tokenService, GamesService gamesService) {
         this.playersService = playersService;
         this.tokenService = tokenService;
+        this.gamesService = gamesService;
     }
 
     @GetMapping
@@ -69,4 +73,13 @@ public class PlayersController {
     public Optional<PlayerView> welcomePage(@PathVariable @NonNull Long id){
         return this.playersService.getOneByIdOptional(id);
     }
+
+    @GetMapping("/{id}/games")
+    public Page<Game> getGamesOfPlayer(@PathVariable Long id,
+                                       @RequestParam(defaultValue ="1") int page,
+                                       @RequestParam(defaultValue = "#{gamesRepository.count()+1}") int size){
+        Pageable pageable = PageRequest.of(page-1, size);
+        return gamesService.getGamesByPlayer(id,pageable);
+    }
+
 }

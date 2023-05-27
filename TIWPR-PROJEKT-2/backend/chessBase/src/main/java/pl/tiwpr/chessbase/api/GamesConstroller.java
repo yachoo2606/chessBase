@@ -70,15 +70,7 @@ public class GamesConstroller {
     }
     @GetMapping("/{id}/statistics")
     public ResponseEntity<String> getGameStatistics(@PathVariable String id){
-        return new ResponseEntity<String>("Site in Build",HttpStatus.SERVICE_UNAVAILABLE);
-    }
-
-    @GetMapping("/players/{id}")
-    public Page<Game> getGamesOfPlayer(@PathVariable Long id,
-                                       @RequestParam(defaultValue ="1") int page,
-                                       @RequestParam(defaultValue = "#{gamesRepository.count()+1}") int size){
-        Pageable pageable = PageRequest.of(page-1, size);
-        return gamesService.getGamesByPlayer(id,pageable);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Site in Build");
     }
 
 }
