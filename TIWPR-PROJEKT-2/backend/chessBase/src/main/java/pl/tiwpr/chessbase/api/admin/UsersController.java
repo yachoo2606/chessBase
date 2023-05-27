@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.config.JwtService;
 import pl.tiwpr.chessbase.model.auth.AuthenticationResponse;
 import pl.tiwpr.chessbase.model.auth.RegisterRequest;
 import pl.tiwpr.chessbase.model.auth.User;
+import pl.tiwpr.chessbase.model.auth.UserView;
 import pl.tiwpr.chessbase.repositories.auth.UserRepository;
 import pl.tiwpr.chessbase.services.AuthenticationService;
 
@@ -35,6 +37,8 @@ public class UsersController {
     @Autowired
     private final JwtService jwtService;
 
+    private final PasswordEncoder passwordEncoder;
+
     @PostMapping
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws DataIntegrityViolationException {
         Optional<User> tempUser = userRepository.findByEmail(request.getEmail());
@@ -55,20 +59,50 @@ public class UsersController {
         log.info("Requested user with id: "+id);
         Optional<User> requestedUser = userRepository.findOneById(id);
         if(requestedUser.isPresent()){
-             if(jwtService.extractRole(token.substring(7)).equals("[ADMIN]")){
-                 return ResponseEntity.ok().body(requestedUser.get());
-             }else{
-                 if(jwtService.extractUsername(token.substring(7)).equals(requestedUser.get().getUsername())){
-                     return ResponseEntity.ok().body(requestedUser.get());
-                 }else{
-                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only requested your user information");
-                 }
-             }
+            if(jwtService.extractUsername(token.substring(7)).equals(requestedUser.get().getUsername()) ||
+                jwtService.extractRole(token.substring(7)).equals("[ADMIN]")){
+                return ResponseEntity.ok().header("VERSION", requestedUser.get().getVersion().toString()).body(requestedUser.get());
+            }else{
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only requested your user information");
+            }
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested user not found");
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id,
+                                        @RequestHeader("VERSION") Long requestVersion,
+                                        @RequestHeader("Authorization") String token,
+                                        @RequestBody UserView updateUser){
+        Optional<User> exisingUser = userRepository.findOneById(id);
+        if(exisingUser.isPresent()){
+            if(jwtService.extractUsername(token.substring(7)).equals(exisingUser.get().getUsername()) ||
+                jwtService.extractRole(token.substring(7)).equals("[ADMIN]")){
 
+                if(!requestVersion.equals(exisingUser.get().getVersion())){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new user and try again.");
+                }
 
+                User userToUpdate= exisingUser.get();
+                userToUpdate.setFirstName(updateUser.getFirstName());
+                userToUpdate.setLastName(updateUser.getLastName());
+                userToUpdate.setEmail(updateUser.getEmail());
+                userToUpdate.setPassword(passwordEncoder.encode(updateUser.getPassword()));
+
+                if(jwtService.extractRole(token.substring(7)).equals("[ADMIN]")){
+                    userToUpdate.setRole(updateUser.getRole());
+                }
+
+                userRepository.save(userToUpdate);
+
+                return ResponseEntity.status(HttpStatus.OK).body("user updated");
+
+            }else{
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your user information");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested user not found");
+        }
+    }
 }

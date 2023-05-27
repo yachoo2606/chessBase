@@ -10,6 +10,8 @@ import java.util.List;
 
 @Data
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -32,6 +34,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Version
+    @Column(name="OPTCLOCK", nullable = false, columnDefinition = "integer DEFAULT 1")
+    private Long version;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
