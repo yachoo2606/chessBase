@@ -10,11 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.model.Game;
+import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.Result;
 import pl.tiwpr.chessbase.services.GamesService;
 import pl.tiwpr.chessbase.services.PlayersService;
 import pl.tiwpr.chessbase.services.tokens.TokenService;
 
+import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 
 @Validated
@@ -73,4 +76,60 @@ public class GamesConstroller {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Site in Build");
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateSpecificGameField(@PathVariable Long id,
+                                                     @RequestHeader("VERSION") Long requestVersion,
+                                                     @RequestBody Map<String, Object> updates){
+        Optional<Game> gameToEdit = gamesService.getOneGame(id);
+        if(gameToEdit.isPresent()){
+            if(!requestVersion.equals(gameToEdit.get().getVersion())){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new game and try again.");
+            }
+
+            Game gameToUpdate = gameToEdit.get();
+
+            for(Map.Entry<String, Object> entry: updates.entrySet()){
+                String field = entry.getKey();
+                Object value = entry.getValue();
+
+                switch (field){
+                    case "event" -> gameToUpdate.setEvent((String) value);
+                    case "date" -> gameToUpdate.setDate(LocalDate.parse(value.toString()));
+                    case "round" ->{
+                        if(value instanceof Integer){
+                            gameToUpdate.setRound((Integer) value);
+                        }
+                    }
+                    case "whitePlayer" -> {
+                            Player player = playersService.getOneById(Long.valueOf((String) value));
+                            gameToUpdate.setWhitePlayer(player);
+                    }
+                    case "whiteELO" ->{
+                        if(value instanceof Integer){
+                            gameToUpdate.setWhiteELO((Integer) value);
+                        }
+                    }
+                    case "blackPlayer" ->{
+                            Player player = playersService.getOneById(Long.valueOf((String) value));
+                            gameToUpdate.setBlackPlayer(player);
+                    }
+                    case "blackELO" ->{
+                        if(value instanceof Integer){
+                            gameToUpdate.setBlackELO((Integer) value);
+                        }
+                    }
+                    case "result" -> {
+                        if(value instanceof Result){
+                            gameToUpdate.setResult((Result) value);
+                        }
+                    }
+                    case "pgn" -> gameToUpdate.setPgn((String) value);
+                }
+
+            }
+            return gamesService.updateGame(gameToUpdate);
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested game not found");
+        }
+    }
 }

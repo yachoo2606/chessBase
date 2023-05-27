@@ -29,6 +29,10 @@ public class Game {
     @Column()
     private Integer round;
 
+    @Version
+    @Column(name="OPTCLOCK", nullable = false, columnDefinition = "integer DEFAULT 1")
+    private Long version;
+
     @ManyToOne
     @JoinColumn(name = "whitePlayer_id", referencedColumnName = "id")
     private Player whitePlayer;

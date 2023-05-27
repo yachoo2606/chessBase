@@ -3,6 +3,7 @@ package pl.tiwpr.chessbase.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.tiwpr.chessbase.model.Game;
 import pl.tiwpr.chessbase.model.Result;
@@ -42,4 +43,9 @@ public class GamesService {
         return gamesRepository.findByPlayerIsWhiteOrBlack(id,pageable);
     }
 
+
+    public ResponseEntity<?> updateGame(Game gameToUpdate) {
+        gamesRepository.save(gameToUpdate);
+        return ResponseEntity.ok().body("Game updated");
+    }
 }
