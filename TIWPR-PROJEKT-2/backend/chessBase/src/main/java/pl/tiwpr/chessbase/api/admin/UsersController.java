@@ -10,14 +10,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.config.JwtService;
-import pl.tiwpr.chessbase.model.auth.AuthenticationResponse;
-import pl.tiwpr.chessbase.model.auth.RegisterRequest;
-import pl.tiwpr.chessbase.model.auth.User;
-import pl.tiwpr.chessbase.model.auth.UserView;
+import pl.tiwpr.chessbase.model.auth.*;
 import pl.tiwpr.chessbase.repositories.auth.UserRepository;
 import pl.tiwpr.chessbase.services.AuthenticationService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -105,4 +103,49 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested user not found");
         }
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updatePartUser(@PathVariable Long id,
+                                            @RequestHeader("VERSION") Long requestVersion,
+                                            @RequestHeader("Authorization") String token,
+                                            @RequestBody Map<String, Object> updates){
+        Optional<User> exisingUser = userRepository.findOneById(id);
+        if(exisingUser.isPresent()){
+            if(jwtService.extractUsername(token.substring(7)).equals(exisingUser.get().getUsername()) ||
+                jwtService.extractRole(token.substring(7)).equals("[ADMIN]")){
+
+                if(!requestVersion.equals(exisingUser.get().getVersion())){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new user and try again.");
+                }
+
+                User userToUpdate= exisingUser.get();
+
+                for(Map.Entry<String, Object> entry: updates.entrySet()){
+                    String field = entry.getKey();
+                    String value = (String) entry.getValue();
+
+                    switch (field) {
+                        case "firstName" -> userToUpdate.setFirstName(value);
+                        case "lastName" -> userToUpdate.setLastName(value);
+                        case "email" -> userToUpdate.setEmail(value);
+                        case "password" -> userToUpdate.setPassword(passwordEncoder.encode(value));
+                        case "role" -> {
+                            if (jwtService.extractRole(token.substring(7)).equals("[ADMIN]")) {
+                                userToUpdate.setRole(Role.valueOf(value));
+                            }
+                        }
+                    }
+                }
+                userRepository.save(userToUpdate);
+
+                return ResponseEntity.status(HttpStatus.OK).body("user updated");
+
+            }else{
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your user information");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested user not found");
+        }
+    }
+
 }
