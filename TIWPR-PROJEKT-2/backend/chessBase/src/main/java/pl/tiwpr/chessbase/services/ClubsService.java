@@ -4,14 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
+import pl.tiwpr.chessbase.model.Address;
 import pl.tiwpr.chessbase.model.Club;
 import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.views.ClubView;
 import pl.tiwpr.chessbase.repositories.ClubRepository;
 import pl.tiwpr.chessbase.repositories.PlayersRepository;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -77,4 +81,73 @@ public class ClubsService {
 
     }
 
+    public ResponseEntity<?> updateClub(String codeName, Long requestVersion, ClubView clubView){
+        Optional<Club> existingClub = clubRepository.findOneByCodeName(codeName);
+
+        if(existingClub.isPresent()){
+            Club clubToUpdate = existingClub.get();
+            if(!requestVersion.equals(clubToUpdate.getVersion())){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new game and try again.");
+            }
+
+            clubToUpdate.setName(clubView.getName());
+            clubToUpdate.setAddress(clubView.getAddress());
+            clubRepository.save(clubToUpdate);
+
+            return ResponseEntity.ok().body("Club updated");
+        }else{
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested club not found");
+        }
+    }
+
+    public ResponseEntity<?> updatePartClub(String codeName, Long requestVersion, Map<String,Object> updates) {
+        Optional<Club> existingClub = clubRepository.findOneByCodeName(codeName);
+        if(existingClub.isPresent()){
+            if(!requestVersion.equals(existingClub.get().getVersion())){
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new game and try again.");
+            }
+            Club clubToUpdate = existingClub.get();
+
+            for(Map.Entry<String, Object> entry:updates.entrySet()){
+                String field = entry.getKey();
+                Object value = entry.getValue();
+                System.out.println(field);
+                System.out.println(value);
+                switch (field){
+                    case "name" -> clubToUpdate.setName((String) value);
+                    case "address" -> {
+                        Address address = modelMapper.map(value, Address.class);
+                        if(address.getCountry()!=null) clubToUpdate.getAddress().setCountry(address.getCountry());
+                        if(address.getCity()!=null) clubToUpdate.getAddress().setCity(address.getCity());
+                        if(address.getStreet()!=null) clubToUpdate.getAddress().setStreet(address.getStreet());
+                        if(address.getNumber()!=null) clubToUpdate.getAddress().setNumber(address.getNumber());
+                        if(address.getPostCode()!=null) clubToUpdate.getAddress().setPostCode(address.getPostCode());
+                        if(address.getLatitude()!=null) clubToUpdate.getAddress().setLatitude(address.getLatitude());
+                        if(address.getLongitude()!=null) clubToUpdate.getAddress().setLongitude(address.getLongitude());
+                    }
+                }
+            }
+            clubRepository.save(clubToUpdate);
+            log.info("Club "+codeName+" updated");
+            return ResponseEntity.ok().body("Club "+codeName+" updated");
+        }else{
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested club not found");
+        }
+    }
+
+    public ResponseEntity<?> deleteClub(String codeName) {
+        Optional<Club> existingClub = clubRepository.findOneByCodeName(codeName);
+
+        if(existingClub.isPresent()){
+            if(existingClub.get().getPlayers().isEmpty()){
+                clubRepository.delete(existingClub.get());
+                return ResponseEntity.ok().body("Club deleted");
+            }else{
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("First delete players from club");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested club not found");
+        }
+
+    }
 }

@@ -18,6 +18,7 @@ import pl.tiwpr.chessbase.services.ClubsService;
 import pl.tiwpr.chessbase.services.PlayersService;
 import pl.tiwpr.chessbase.services.tokens.TokenService;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Validated
@@ -95,6 +96,20 @@ public class ClubsController {
         Player player2 = playersService.getOneById(p2id);
 
         return ResponseEntity.ok().body(clubsService.transferPlayers(player1,player2));
+    }
+
+    @PutMapping("/{codeName}")
+    public ResponseEntity<?> updateClub(@PathVariable String codeName, @RequestHeader("VERSION") Long requestVersion,@RequestBody @NonNull ClubView clubView) {
+        return clubsService.updateClub(codeName, requestVersion, clubView);
+    }
+    @PatchMapping("/{codeName}")
+    public ResponseEntity<?> updatePartClub(@PathVariable String codeName, @RequestHeader("VERSION") Long requestVersion,@RequestBody @NonNull Map<String,Object> clubView) {
+        return clubsService.updatePartClub(codeName, requestVersion, clubView);
+    }
+
+    @DeleteMapping("/{codeName}")
+    public ResponseEntity<?> deleteClub(@PathVariable String codeName){
+        return clubsService.deleteClub(codeName);
     }
 
 }

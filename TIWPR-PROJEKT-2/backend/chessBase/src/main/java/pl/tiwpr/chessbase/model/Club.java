@@ -29,6 +29,10 @@ public class Club {
 
     private Address address;
 
+    @Version
+    @Column(name="OPTCLOCK", nullable = false, columnDefinition = "integer DEFAULT 1")
+    private Long version;
+
     @OneToMany(mappedBy = "club")
     @JsonManagedReference
     private  List<Player> players;
