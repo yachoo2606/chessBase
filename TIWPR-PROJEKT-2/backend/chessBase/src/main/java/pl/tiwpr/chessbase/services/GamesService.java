@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pl.tiwpr.chessbase.model.Game;
 import pl.tiwpr.chessbase.model.Player;
 import pl.tiwpr.chessbase.model.Result;
+import pl.tiwpr.chessbase.model.views.GameView;
 import pl.tiwpr.chessbase.repositories.GamesRepository;
 
 import java.time.LocalDate;
@@ -27,7 +28,19 @@ public class GamesService {
         this.playersService = playersService;
     }
 
-    public Game createGame(Game game){
+    public Game createGame(GameView gameView){
+
+        Game game = new Game();
+        game.setEvent(gameView.getEvent());
+        game.setDate(gameView.getDate());
+        game.setRound(gameView.getRound());
+        game.setWhitePlayer(playersService.getOneById(gameView.getWhitePlayer()));
+        game.setBlackPlayer(playersService.getOneById(gameView.getBlackPlayer()));
+        game.setWhiteELO(gameView.getWhiteELO());
+        game.setBlackELO(gameView.getBlackELO());
+        game.setPgn(gameView.getPgn());
+        game.setResult(gameView.getResult());
+
         Game addedGame = gamesRepository.save(game);
         log.info("Game added: "+game);
         return addedGame;

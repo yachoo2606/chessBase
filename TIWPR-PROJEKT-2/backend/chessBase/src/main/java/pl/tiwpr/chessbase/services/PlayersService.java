@@ -8,9 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.tiwpr.chessbase.exceptions.MissingDataException;
-import pl.tiwpr.chessbase.model.*;
+import pl.tiwpr.chessbase.model.Club;
+import pl.tiwpr.chessbase.model.Gender;
+import pl.tiwpr.chessbase.model.Player;
+import pl.tiwpr.chessbase.model.Title;
 import pl.tiwpr.chessbase.model.views.PlayerView;
 import pl.tiwpr.chessbase.repositories.ClubRepository;
+import pl.tiwpr.chessbase.repositories.GamesRepository;
 import pl.tiwpr.chessbase.repositories.PlayersRepository;
 import pl.tiwpr.chessbase.repositories.TitleRepository;
 
@@ -26,14 +30,16 @@ public class PlayersService {
     private final PlayersRepository playersRepository;
     private final ClubRepository clubRepository;
     private final TitleRepository titleRepository;
+    private final GamesRepository gamesRepository;
 
     public PlayersService(
             ModelMapper modelMapper,
-            PlayersRepository playersRepository, ClubRepository clubRepository, TitleRepository titleRepository){
+            PlayersRepository playersRepository, ClubRepository clubRepository, TitleRepository titleRepository, GamesRepository gamesRepository){
         this.modelMapper = modelMapper;
         this.playersRepository = playersRepository;
         this.clubRepository = clubRepository;
         this.titleRepository = titleRepository;
+        this.gamesRepository = gamesRepository;
     }
 
     public Page<PlayerView> getAllPlayers(Pageable pageable){
@@ -136,6 +142,20 @@ public class PlayersService {
             return ResponseEntity.ok().body("Player updated");
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Requested player not found");
+        }
+    }
+
+    public ResponseEntity<?> deletePlayer(Long id) {
+        Optional<Player> toDelete = playersRepository.findOneById(id);
+        if(toDelete.isPresent()){
+            if(gamesRepository.findByPlayerIsWhiteOrBlackList(id).size() == 0){
+                playersRepository.delete(toDelete.get());
+                return ResponseEntity.ok().body("Player deleted");
+            }else{
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Delete players game first");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Player not Found");
         }
     }
 }

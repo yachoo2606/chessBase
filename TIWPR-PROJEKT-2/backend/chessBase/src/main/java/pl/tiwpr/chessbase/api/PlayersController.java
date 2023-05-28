@@ -96,5 +96,11 @@ public class PlayersController {
                                                @RequestBody Map<String, Object> updates){
         return playersService.updatePartOfPlayer(id,requestVersion, updates);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> updatePartOfPlayer(@PathVariable Long id){
+        return playersService.deletePlayer(id);
+    }
+
+
 
 }

@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.tiwpr.chessbase.model.Game;
 import pl.tiwpr.chessbase.model.Result;
+import pl.tiwpr.chessbase.model.views.GameView;
 import pl.tiwpr.chessbase.services.GamesService;
 import pl.tiwpr.chessbase.services.PlayersService;
 import pl.tiwpr.chessbase.services.tokens.TokenService;
@@ -48,14 +49,14 @@ public class GamesConstroller {
     }
 
     @PostMapping
-    public ResponseEntity<?> addGame(@RequestHeader("Token") String postToken,@RequestBody Game game) throws ClassNotFoundException {
+    public ResponseEntity<?> addGame(@RequestHeader("Token") String postToken,@RequestBody GameView game) throws ClassNotFoundException {
 
         if(!tokenService.isTokenValid(postToken)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicated Request");
         }
         tokenService.invalidateToken(postToken);
 
-        if(playersService.getOneByIdOptional(game.getBlackPlayer().getId()).isEmpty() || playersService.getOneByIdOptional(game.getWhitePlayer().getId()).isEmpty()){
+        if(playersService.getOneByIdOptional(playersService.getOneById(game.getBlackPlayer()).getId()).isEmpty() || playersService.getOneByIdOptional(playersService.getOneById(game.getWhitePlayer()).getId()).isEmpty()){
             throw new ClassNotFoundException("There is no player with provided ID");
         }
         return ResponseEntity.ok().body(gamesService.createGame(game));
