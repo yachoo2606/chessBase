@@ -129,12 +129,20 @@ public class PlayersService {
                         }
                     }
                     case "title"->{
-                        Title title = titleRepository.getReferenceById(Long.valueOf((String) value));
-                        playerToUpdate.setTitle(title);
+                        if(value==null){
+                            playerToUpdate.setTitle(null);
+                        }else{
+                            Title title = titleRepository.getReferenceById(Long.valueOf((String) value));
+                            playerToUpdate.setTitle(title);
+                        }
                     }
                     case "club"->{
-                        Club club = clubRepository.getReferenceById(Long.valueOf((String) value));
-                        playerToUpdate.setClub(club);
+                        if(value == null){
+                            playerToUpdate.setClub(null);
+                        }else{
+                            Club club = clubRepository.getReferenceById(Long.valueOf((String) value));
+                            playerToUpdate.setClub(club);
+                        }
                     }
                 }
             }
