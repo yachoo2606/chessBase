@@ -19,6 +19,7 @@ import pl.tiwpr.chessbase.services.GamesService;
 import pl.tiwpr.chessbase.services.PlayersService;
 import pl.tiwpr.chessbase.services.tokens.TokenService;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Validated
@@ -80,6 +81,20 @@ public class PlayersController {
                                        @RequestParam(defaultValue = "#{gamesRepository.count()+1}") int size){
         Pageable pageable = PageRequest.of(page-1, size);
         return gamesService.getGamesByPlayer(id,pageable);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateWholePlayer(@PathVariable Long id,
+                                               @RequestHeader("VERSION") Long requestVersion,
+                                               @RequestBody Player updatedPlayer){
+        return playersService.updateWholePlayer(id,requestVersion, updatedPlayer);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updatePartOfPlayer(@PathVariable Long id,
+                                               @RequestHeader("VERSION") Long requestVersion,
+                                               @RequestBody Map<String, Object> updates){
+        return playersService.updatePartOfPlayer(id,requestVersion, updates);
     }
 
 }

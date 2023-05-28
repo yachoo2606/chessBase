@@ -37,6 +37,10 @@ public class Player {
     @Column()
     private Integer ELO = 1000;
 
+    @Version
+    @Column(name="OPTCLOCK", nullable = false, columnDefinition = "integer DEFAULT 1")
+    private Long version;
+
     @ManyToOne
     @JoinColumn(name = "title_id")
     private Title title;
