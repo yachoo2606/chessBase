@@ -19,5 +19,6 @@ public interface GamesRepository  extends JpaRepository<Game,Long> {
     List<Game> findByPlayerIsWhiteOrBlackList(Long id);
 
     Page<Game> findGamesByResult(Result result,Pageable pageable);
+    List<Game> findGamesByResult(Result result);
 
 }
