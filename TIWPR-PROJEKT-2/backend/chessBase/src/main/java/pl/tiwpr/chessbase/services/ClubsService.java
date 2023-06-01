@@ -111,8 +111,6 @@ public class ClubsService {
             for(Map.Entry<String, Object> entry:updates.entrySet()){
                 String field = entry.getKey();
                 Object value = entry.getValue();
-                System.out.println(field);
-                System.out.println(value);
                 switch (field){
                     case "name" -> clubToUpdate.setName((String) value);
                     case "address" -> {
