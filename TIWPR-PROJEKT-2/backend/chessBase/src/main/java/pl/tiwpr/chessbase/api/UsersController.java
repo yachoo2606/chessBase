@@ -106,17 +106,12 @@ public class UsersController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updatePartUser(@PathVariable Long id,
-                                            @RequestHeader("VERSION") Long requestVersion,
                                             @RequestHeader("Authorization") String token,
                                             @RequestBody Map<String, Object> updates){
         Optional<User> exisingUser = userRepository.findOneById(id);
         if(exisingUser.isPresent()){
             if(jwtService.extractUsername(token.substring(7)).equals(exisingUser.get().getUsername()) ||
                 jwtService.extractRole(token.substring(7)).equals("[ADMIN]")){
-
-                if(!requestVersion.equals(exisingUser.get().getVersion())){
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new user and try again.");
-                }
 
                 User userToUpdate= exisingUser.get();
 

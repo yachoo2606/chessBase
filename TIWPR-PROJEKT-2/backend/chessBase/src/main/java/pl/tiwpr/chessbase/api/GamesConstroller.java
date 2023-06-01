@@ -77,9 +77,8 @@ public class GamesConstroller {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateSpecificGameField(@PathVariable Long id,
-                                                     @RequestHeader("VERSION") Long requestVersion,
                                                      @RequestBody Map<String, Object> updates){
-        return gamesService.updateGame(id,requestVersion,updates);
+        return gamesService.updateGame(id,updates);
     }
 
     @DeleteMapping("/{id}")

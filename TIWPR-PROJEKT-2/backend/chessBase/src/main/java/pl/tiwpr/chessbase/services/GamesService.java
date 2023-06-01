@@ -63,13 +63,9 @@ public class GamesService {
     }
 
 
-    public ResponseEntity<?> updateGame(Long id, Long requestVersion,Map<String, Object> updates) {
+    public ResponseEntity<?> updateGame(Long id,Map<String, Object> updates) {
         Optional<Game> gameToEdit = gamesRepository.findGameById(id);
         if(gameToEdit.isPresent()){
-            if(!requestVersion.equals(gameToEdit.get().getVersion())){
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new game and try again.");
-            }
-
             Game gameToUpdate = gameToEdit.get();
 
             for(Map.Entry<String, Object> entry: updates.entrySet()){

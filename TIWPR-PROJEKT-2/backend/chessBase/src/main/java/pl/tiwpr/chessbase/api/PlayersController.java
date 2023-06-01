@@ -92,9 +92,8 @@ public class PlayersController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updatePartOfPlayer(@PathVariable Long id,
-                                               @RequestHeader("VERSION") Long requestVersion,
                                                @RequestBody Map<String, Object> updates){
-        return playersService.updatePartOfPlayer(id,requestVersion, updates);
+        return playersService.updatePartOfPlayer(id, updates);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> updatePartOfPlayer(@PathVariable Long id){

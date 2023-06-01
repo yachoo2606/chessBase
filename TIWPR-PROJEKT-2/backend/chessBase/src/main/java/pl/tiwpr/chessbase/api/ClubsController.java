@@ -103,8 +103,8 @@ public class ClubsController {
         return clubsService.updateClub(codeName, requestVersion, clubView);
     }
     @PatchMapping("/{codeName}")
-    public ResponseEntity<?> updatePartClub(@PathVariable String codeName, @RequestHeader("VERSION") Long requestVersion,@RequestBody @NonNull Map<String,Object> clubView) {
-        return clubsService.updatePartClub(codeName, requestVersion, clubView);
+    public ResponseEntity<?> updatePartClub(@PathVariable String codeName,@RequestBody @NonNull Map<String,Object> clubView) {
+        return clubsService.updatePartClub(codeName, clubView);
     }
 
     @DeleteMapping("/{codeName}")

@@ -100,12 +100,9 @@ public class ClubsService {
         }
     }
 
-    public ResponseEntity<?> updatePartClub(String codeName, Long requestVersion, Map<String,Object> updates) {
+    public ResponseEntity<?> updatePartClub(String codeName, Map<String,Object> updates) {
         Optional<Club> existingClub = clubRepository.findOneByCodeName(codeName);
         if(existingClub.isPresent()){
-            if(!requestVersion.equals(existingClub.get().getVersion())){
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new game and try again.");
-            }
             Club clubToUpdate = existingClub.get();
 
             for(Map.Entry<String, Object> entry:updates.entrySet()){

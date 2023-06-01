@@ -100,15 +100,10 @@ public class PlayersService {
         }
     }
 
-    public ResponseEntity<?> updatePartOfPlayer(Long id, Long requestVersion, Map<String, Object> updates) {
+    public ResponseEntity<?> updatePartOfPlayer(Long id, Map<String, Object> updates) {
         Optional<Player> existingPlayer = playersRepository.findOneById(id);
 
         if(existingPlayer.isPresent()){
-
-            if(!requestVersion.equals(existingPlayer.get().getVersion())){
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("You are trying to update out of date object get new game and try again.");
-            }
-
             Player playerToUpdate = existingPlayer.get();
             for(Map.Entry<String, Object> entry: updates.entrySet()){
                 String field = entry.getKey();
