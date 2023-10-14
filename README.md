@@ -33,8 +33,8 @@ This project is a backend application for a chess base system that stores inform
 
 ## Setup and Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/chess-base-backend.git`
-2. Navigate to the project directory: `cd chess-base-backend`
+1. Clone the repository: `git clone https://github.com/yachoo2606/chessBase.git`
+2. Navigate to the project directory: `cd chessBase`
 3. Open the project in your favorite IDE (e.g., IntelliJ IDEA, Eclipse).
 4. Configure the database in `application.yml`.
 5. Run the application.
