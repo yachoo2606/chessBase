@@ -24,10 +24,10 @@ public class DataInitializer {
     public void init(){
         User user = new User();
 
-        user.setEmail("YOUR EMAIL (LOGIN)");
-        user.setPassword(passwordEncoder.encode("ADMIN PAssWORD"));
-        user.setFirstName("NAME");
-        user.setLastName("Last");
+        user.setEmail("mail@mail.com");
+        user.setPassword(passwordEncoder.encode("12345"));
+        user.setFirstName("name");
+        user.setLastName("surname");
         user.setRole(Role.ADMIN);
 
         userRepository.save(user);
