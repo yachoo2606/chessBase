@@ -1,11 +1,11 @@
 server:
-  port: ${port:9000}
+  port: ${PORT:9000}
 
 spring:
   application:
     name: chessbase
   datasource:
-    url: jdbc:postgresql://${POSTGRES_URL:localhost:5432}/chessbase
+    url: jdbc:postgresql://${POSTGRES_URL:localhost}:${POSTGRES_PORT:5432}/${DB_NAME:chessbase}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgrespw}
     driver-class-name: org.postgresql.Driver
