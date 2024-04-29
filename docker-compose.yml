@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  chessbase-backend:
+    build: backend/chessbase
+    container_name: chessbase
+    restart: always
+    environment:
+      PORT: ${PORT}
+      POSTGRES_URL: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      DB_NAME: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
+    driver: local
