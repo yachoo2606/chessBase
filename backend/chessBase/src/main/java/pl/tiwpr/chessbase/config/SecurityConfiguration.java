@@ -30,20 +30,21 @@ public class SecurityConfiguration {
         .csrf()
         .disable()
         .authorizeHttpRequests()
-        .requestMatchers("/tokens/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-        .requestMatchers(HttpMethod.GET, "/players").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .exceptionHandling()
-        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-        .accessDeniedHandler(new CustomAccessDeniedHandler())
-        .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .requestMatchers("/**").permitAll();
+//        .requestMatchers("/tokens/**").permitAll()
+//        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+//        .requestMatchers(HttpMethod.GET, "/players").permitAll()
+//        .anyRequest().authenticated()
+//        .and()
+//        .exceptionHandling()
+//        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//        .accessDeniedHandler(new CustomAccessDeniedHandler())
+//        .and()
+//        .sessionManagement()
+//        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//        .and()
+//        .authenticationProvider(authenticationProvider)
+//        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();
