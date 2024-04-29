@@ -26,6 +26,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/players")
+@CrossOrigin
 public class PlayersController {
 
 

@@ -25,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/clubs")
+@CrossOrigin
 public class ClubsController {
     private final ClubsService clubsService;
     private final PlayersService playersService;

@@ -17,6 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/info")
+@CrossOrigin
 public class InfoController {
     private final TitlesService titlesService;
 
