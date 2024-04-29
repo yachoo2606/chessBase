@@ -47,7 +47,7 @@ const Players = () => {
       <div className="self-end">
         <button onClick={openModal} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Create New Player</button>
       </div>
-      <div className="w-3/4 bg-white shadow overflow-hidden rounded-lg">
+      <div className="overflow-x-auto w-3/4 bg-white shadow overflow-hidden rounded-lg">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
