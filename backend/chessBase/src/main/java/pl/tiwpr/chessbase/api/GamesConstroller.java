@@ -23,6 +23,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/games")
+@CrossOrigin
 public class GamesConstroller {
     private final GamesService gamesService;
     private final PlayersService playersService;

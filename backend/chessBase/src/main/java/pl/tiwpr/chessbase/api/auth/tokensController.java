@@ -15,6 +15,7 @@ import pl.tiwpr.chessbase.services.tokens.TokenService;
 @Validated
 @RestController
 @RequestMapping("/tokens")
+@CrossOrigin
 public class tokensController {
 
     private final AuthenticationService authService;
