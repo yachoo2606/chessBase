@@ -26,19 +26,19 @@ jobs:
         echo ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }} | docker login ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} -u ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password-stdin
     
     - name: Build the backend Docker image
-      run: docker build backend/chessBase --file backend/chessBase/Dockerfile --tag backend-image:${{ env.TIMESTAMP }}
+      run: docker build backend/chessBase --file backend/chessBase/Dockerfile --tag chessbase-backend:${{ env.TIMESTAMP }}
     
     - name: Tag the backend Docker image
-      run: docker tag backend-image:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/backend-image:${{ env.TIMESTAMP }}
+      run: docker tag backend-image:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:${{ env.TIMESTAMP }}
     
     - name: Push the backend Docker image
-      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/backend-image:${{ env.TIMESTAMP }}
+      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:${{ env.TIMESTAMP }}
     
     - name: Build the frontend Docker image
-      run: docker build frontend --file frontend/Dockerfile --tag frontend-image:${{ env.TIMESTAMP }}
+      run: docker build frontend --file frontend/Dockerfile --tag chessbase-frontend:${{ env.TIMESTAMP }}
     
     - name: Tag the frontend Docker image
-      run: docker tag frontend-image:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/frontend-image:${{ env.TIMESTAMP }}
+      run: docker tag frontend-image:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:${{ env.TIMESTAMP }}
     
     - name: Push the frontend Docker image
-      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/frontend-image:${{ env.TIMESTAMP }}
+      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:${{ env.TIMESTAMP }}
