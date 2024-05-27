@@ -29,7 +29,7 @@ jobs:
       run: docker build backend/chessBase --file backend/chessBase/Dockerfile --tag chessbase-backend:${{ env.TIMESTAMP }}
     
     - name: Tag the backend Docker image
-      run: docker tag backend-image:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:${{ env.TIMESTAMP }}
+      run: docker tag chessbase-backend:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:${{ env.TIMESTAMP }}
     
     - name: Push the backend Docker image
       run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:${{ env.TIMESTAMP }}
@@ -38,7 +38,7 @@ jobs:
       run: docker build frontend --file frontend/Dockerfile --tag chessbase-frontend:${{ env.TIMESTAMP }}
     
     - name: Tag the frontend Docker image
-      run: docker tag frontend-image:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:${{ env.TIMESTAMP }}
+      run: docker tag chessbase-frontend:${{ env.TIMESTAMP }} ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:${{ env.TIMESTAMP }}
     
     - name: Push the frontend Docker image
       run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:${{ env.TIMESTAMP }}
