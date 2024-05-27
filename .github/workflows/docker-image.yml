@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TIMESTAMP: ${{ github.run_id }}  # Use the GitHub run ID as a unique identifier
-
+      # TIMESTAMP: ${{ github.run_id }}  # Use the GitHub run ID as a unique identifier
+      TIMESTAMP: latest  # Use the GitHub run ID as a unique identifier
     steps:
     - uses: actions/checkout@v4
     
