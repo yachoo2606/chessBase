@@ -23,12 +23,12 @@ jobs:
       run: docker build backend/chessBase --file backend/chessBase/Dockerfile --tag ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:$(date +%s)
 
     - name: Push the backend Docker image
-      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:$(date +%s)
+      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend
     
     
     - name: Build the frontend Docker image
       run: docker build frontend --file frontend/Dockerfile --tag ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:$(date +%s)
     
     - name: Push the backend Docker image
-      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:$(date +%s)
+      run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend
     
