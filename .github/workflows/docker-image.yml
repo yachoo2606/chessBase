@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Azure Image CI
 
 on:
   push:
@@ -20,14 +20,14 @@ jobs:
         echo ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }} | docker login ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }} -u ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} --password-stdin
     
     - name: Build the backend Docker image
-      run: docker build backend/chessBase --file backend/chessBase/Dockerfile --tag chessbase-backend:$(date +%s)
+      run: docker build backend/chessBase --file backend/chessBase/Dockerfile --tag ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:$(date +%s)
 
     - name: Push the backend Docker image
       run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-backend:$(date +%s)
     
     
     - name: Build the frontend Docker image
-      run: docker build frontend --file frontend/Dockerfile --tag chessbase-frontend:$(date +%s)
+      run: docker build frontend --file frontend/Dockerfile --tag ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:$(date +%s)
     
     - name: Push the backend Docker image
       run: docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_LOGIN_SERVER }}/chessbase-frontend:$(date +%s)
