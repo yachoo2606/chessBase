@@ -5,7 +5,7 @@ spring:
   application:
     name: chessbase
   datasource:
-    url: jdbc:postgresql://${POSTGRES_URL:localhost}:${POSTGRES_PORT:5432}/${DB_NAME:chessbase}
+    url: jdbc:postgresql://${POSTGRES_URL:localhost}:${POSTGRES_PORT:5432}/${DB_NAME:chessbase}?sslmode=require
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgrespw}
     driver-class-name: org.postgresql.Driver
@@ -26,3 +26,4 @@ application:
       expiration: 86400000 # 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+

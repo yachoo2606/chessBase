@@ -5,6 +5,7 @@ This repository contains the backend application built using Spring Boot for man
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [DOCKER COMPOSE](#docker-compose)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Setup and Installation](#setup-and-installation)
@@ -16,6 +17,14 @@ This repository contains the backend application built using Spring Boot for man
 ## Introduction
 
 This project is a backend application for a chess base system that stores information about chess clubs, games, and titles. It provides RESTful APIs to manage and retrieve data related to chess entities.
+
+## DOCKER COMPOSE
+
+run this project in docker compose
+
+```shell
+docker compose down -v && docker compose build --no-cache && docker compose up --force-recreate -d
+```
 
 ## Features
 

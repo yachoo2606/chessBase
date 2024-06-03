@@ -26,5 +26,5 @@ docker run -e PORT=9000 -e POSTGRES_URL=host.docker.internal -e DB_NAME=chessbas
 run this project in docker compose
 
 ```shell
-docker compose down -v && docker compose up --force-recreate -d
+docker compose down -v && docker compose build --no-cache && docker compose up --force-recreate -d
 ```

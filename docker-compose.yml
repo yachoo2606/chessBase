@@ -30,6 +30,16 @@ services:
     depends_on:
       - postgres
 
+  chessbase-frontend:
+    build: frontend
+    restart: always
+    ports:
+     - 80:3000
+    environment:
+      - REACT_APP_API_URL=${BACKEND_URL}:${PORT}
+    depends_on:
+      - chessbase-backend
+
 volumes:
   postgres-data:
     driver: local
